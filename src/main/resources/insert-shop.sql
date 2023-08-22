@@ -63,3 +63,21 @@ VALUES (2, 'Отличный смартфон!', 5),
        (8, 'Хорошее качество!', 5),
        (8, '"Не оправдал ожидания, тяжелый!"', 4),
        (9, 'Отличный!', 5);
+-- Добавление тестового Users
+INSERT INTO users (username, password, email)
+VALUES ('user1', 'password1', 'user1@example.com'),
+       ('user2', 'password2', 'user2@example.com'),
+       ('user3', 'password3', 'user3@example.com');
+-- Добавление тестового Carts
+INSERT INTO carts (user_id)
+VALUES (1),
+       (2),
+       (3);
+-- Добавление тестового Cart Items
+INSERT INTO cart_items (cart_id, product_id, quantity)
+VALUES (1, 1, 2),
+       (1, 3, 1),
+       (2, 2, 3),
+       (2, 4, 2),
+       (3, 5, 1),
+       (3, 6, 2);

@@ -1,56 +1,55 @@
 package ru.railshop.onlineshop.dao;
 
-import ru.railshop.onlineshop.entity.Product;
+import ru.railshop.onlineshop.entity.Cart;
 import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ProductDao implements Dao<Long, Product> {
-
-    private static final ProductDao INSTANCE = new ProductDao();
-
+public class CartDao implements Dao<Long, Cart> {
+    private static final CartDao INSTANCE = new CartDao();
     private static final String SAVE_SQL = """
-            INSERT INTO products (
-            name, description, price, quantity
+            INSERT INTO carts (
+             user_id, created_at
             ) 
             values 
-            (?,?,?,?);
+            (?,?);
             """;
 
     private static final String UPDATE_SQL = """
-            UPDATE products
-             SET name = ?, description = ?, price = ?, quantity = ?
+            UPDATE carts
+             SET user_id = ?, created_at = ?
             WHERE id = ?
             """;
 
     private static final String FIND_ALL_SQL = """
-            SELECT id, name, description,price, quantity FROM products
+            SELECT c.id, c.user_id, u.username, u.password, u.email,
+            c.created_at
+            FROM carts c 
+            INNER JOIN users u ON c.user_id = u.id 
             """;
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + """
-            WHERE id = ?;
+            WHERE c.id = ?;
             """;
     private static final String DELETE_SQL = """
-            DELETE FROM products WHERE
+            DELETE FROM carts WHERE
             id = ?;
             """;
 
     @Override
-    public boolean update(Product product) {
-
+    public boolean update(Cart cart) {
         try (var connection = ConnectionManager.open();
              var prepareStatement = connection.prepareStatement(UPDATE_SQL)) {
 
-            prepareStatement.setString(1, product.getName());
-            prepareStatement.setString(2, product.getDescription());
-            prepareStatement.setBigDecimal(3, product.getPrice());
-            prepareStatement.setInt(4, product.getQuantity());
-            prepareStatement.setLong(5, product.getId());
+            prepareStatement.setLong(1, cart.getUserId().getId());
+            prepareStatement.setTimestamp(2, Timestamp.valueOf(cart.getCreatedAt()));
+            prepareStatement.setLong(3, cart.getId());
 
             return prepareStatement.executeUpdate() > 0;
 
@@ -60,66 +59,72 @@ public class ProductDao implements Dao<Long, Product> {
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Cart> findAll() {
         try (var connection = ConnectionManager.open();
              var prepareStatement = connection.prepareStatement(FIND_ALL_SQL)) {
 
-            List<Product> products = new ArrayList<>();
+            List<Cart> carts = new ArrayList<>();
 
             var result = prepareStatement.executeQuery();
 
             while (result.next())
-                products.add(new Product(result.getLong("id"),
-                        result.getString("name"),
-                        result.getString("description"),
-                        result.getBigDecimal("price"),
-                        result.getInt("quantity")));
-            return products;
+                carts.add(new Cart(result.getLong("id"),
+                        new User(
+                                result.getLong("id"),
+                                result.getString("username"),
+                                result.getString("password"),
+                                result.getString("email")),
+                        result.getTimestamp("created_at").toLocalDateTime())
+                );
+            return carts;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
-    public Optional<Product> findById(Long id) {
+    public Optional<Cart> findById(Long id) {
         try (var connection = ConnectionManager.open();
              var prepareStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             prepareStatement.setLong(1, id);
 
-            Product product = null;
+            Cart cart = null;
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                product = new Product(result.getLong("id"),
-                        result.getString("name"),
-                        result.getString("description"),
-                        result.getBigDecimal("price"),
-                        result.getInt("quantity"));
+                cart = new Cart(result.getLong("id"),
+                        new User(
+                                result.getLong("id"),
+                                result.getString("username"),
+                                result.getString("password"),
+                                result.getString("email")
+                        ),
+
+                        result.getTimestamp("created_at").toLocalDateTime()
+                );
             }
-            return Optional.ofNullable(product);
+            return Optional.ofNullable(cart);
         } catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
-    public Product save(Product product) {
+    public Cart save(Cart cart) {
         try (var connection = ConnectionManager.open();
              var prepareStatement = connection.prepareStatement(SAVE_SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
 
-            prepareStatement.setString(1, product.getName());
-            prepareStatement.setString(2, product.getDescription());
-            prepareStatement.setBigDecimal(3, product.getPrice());
-            prepareStatement.setInt(4, product.getQuantity());
+            prepareStatement.setLong(1, cart.getUserId().getId());
+            prepareStatement.setTimestamp(2, Timestamp.valueOf(cart.getCreatedAt()));
 
             prepareStatement.executeUpdate();
 
             var keys = prepareStatement.getGeneratedKeys();
 
             if (keys.next())
-                product.setId(keys.getLong("id"));
-            return product;
+                cart.setId(keys.getLong("id"));
+            return cart;
 
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -139,10 +144,10 @@ public class ProductDao implements Dao<Long, Product> {
         }
     }
 
-    private ProductDao() {
+    private CartDao() {
     }
 
-    public static ProductDao getInstance() {
+    public static CartDao getInstance() {
         return INSTANCE;
     }
 }

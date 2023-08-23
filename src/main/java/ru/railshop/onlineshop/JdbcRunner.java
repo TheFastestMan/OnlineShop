@@ -1,9 +1,6 @@
 package ru.railshop.onlineshop;
 
-import ru.railshop.onlineshop.dao.OrderDao;
-import ru.railshop.onlineshop.dao.ProductDao;
-import ru.railshop.onlineshop.dao.ReviewDao;
-import ru.railshop.onlineshop.dao.UserDao;
+import ru.railshop.onlineshop.dao.*;
 import ru.railshop.onlineshop.entity.*;
 
 import java.math.BigDecimal;
@@ -23,15 +20,24 @@ public class JdbcRunner {
 //
 //        productDao.delete(11L);
 
-//        LocalDateTime orderDate = LocalDateTime.of(2020, 01, 01, 07, 25);
-//        OrderDao orderDao = OrderDao.getInstance();
-//        Order order = new Order(10L, orderDate, OrderStatus.PROCESSING);
+        LocalDateTime orderDate = LocalDateTime.of(2020, 01, 01, 07, 25);
+        OrderDao orderDao = OrderDao.getInstance();
+        Order order = new Order(10L, orderDate, OrderStatus.PROCESSING);
 //
 //        System.out.println(orderDao.findById(1L));
 
 //        ReviewDao reviewDao = ReviewDao.getInstance();
 //        Review review = new Review(26L, product, "not good", 3);
 //        reviewDao.delete(24L);
+
+//        OrderDetail orderDetail = new OrderDetail(11L, order, product, 111);
+//        OrderDetailDao orderDetailDao = OrderDetailDao.getInstance();
+//
+//        System.out.println(orderDetailDao.findById(11L));
+//
+//        orderDetailDao.delete(11L);
+
+
 
 
     }

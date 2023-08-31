@@ -4,6 +4,7 @@ import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -71,29 +72,33 @@ public class CartItemDao implements Dao<Long, CartItem> {
             var result = prepareStatement.executeQuery();
 
             while (result.next())
-                cartItems.add(new CartItem(result.getLong("id"),
-                                new Cart(result.getLong("id"),
-                                        new User(result.getLong("id"),
-                                                result.getString("username"),
-                                                result.getString("password"),
-                                                result.getString("email")
-                                        ),
-                                        result.getTimestamp("created_at").toLocalDateTime()
-                                ),
-                                new Product(
-                                        result.getLong("id"),
-                                        result.getString("name"),
-                                        result.getString("description"),
-                                        result.getBigDecimal("price"),
-                                        result.getInt("quantity")
-                                ),
-                                result.getInt("quantity")
-                        )
+                cartItems.add(buildCartItem(result)
                 );
             return cartItems;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
+    }
+
+    private static CartItem buildCartItem(ResultSet result) throws SQLException {
+        return new CartItem(result.getLong("id"),
+                new Cart(result.getLong("id"),
+                        new User(result.getLong("id"),
+                                result.getString("username"),
+                                result.getString("password"),
+                                result.getString("email")
+                        ),
+                        result.getTimestamp("created_at").toLocalDateTime()
+                ),
+                new Product(
+                        result.getLong("id"),
+                        result.getString("name"),
+                        result.getString("description"),
+                        result.getBigDecimal("price"),
+                        result.getInt("quantity")
+                ),
+                result.getInt("quantity")
+        );
     }
 
     @Override
@@ -106,24 +111,7 @@ public class CartItemDao implements Dao<Long, CartItem> {
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                cartItem = new CartItem(result.getLong("id"),
-                        new Cart(result.getLong("id"),
-                                new User(result.getLong("id"),
-                                        result.getString("username"),
-                                        result.getString("password"),
-                                        result.getString("email")
-                                ),
-                                result.getTimestamp("created_at").toLocalDateTime()
-                        ),
-                        new Product(
-                                result.getLong("id"),
-                                result.getString("name"),
-                                result.getString("description"),
-                                result.getBigDecimal("price"),
-                                result.getInt("quantity")
-                        ),
-                        result.getInt("quantity")
-                );
+                cartItem = buildCartItem(result);
             }
             return Optional.ofNullable(cartItem);
         } catch (SQLException e) {

@@ -5,6 +5,7 @@ import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -92,21 +93,26 @@ public class CartDao implements Dao<Long, Cart> {
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                cart = new Cart(result.getLong("id"),
-                        new User(
-                                result.getLong("id"),
-                                result.getString("username"),
-                                result.getString("password"),
-                                result.getString("email")
-                        ),
-
-                        result.getTimestamp("created_at").toLocalDateTime()
-                );
+                cart = buildCart(result);
             }
             return Optional.ofNullable(cart);
         } catch (SQLException e) {
+
             throw new DaoException(e);
         }
+    }
+
+    private static Cart buildCart(ResultSet result) throws SQLException {
+        return new Cart(result.getLong("id"),
+                new User(
+                        result.getLong("id"),
+                        result.getString("username"),
+                        result.getString("password"),
+                        result.getString("email")
+                ),
+
+                result.getTimestamp("created_at").toLocalDateTime()
+        );
     }
 
     @Override

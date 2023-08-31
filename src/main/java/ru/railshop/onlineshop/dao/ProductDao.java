@@ -5,6 +5,7 @@ import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -69,15 +70,19 @@ public class ProductDao implements Dao<Long, Product> {
             var result = prepareStatement.executeQuery();
 
             while (result.next())
-                products.add(new Product(result.getLong("id"),
-                        result.getString("name"),
-                        result.getString("description"),
-                        result.getBigDecimal("price"),
-                        result.getInt("quantity")));
+                products.add(buildProduct(result));
             return products;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
+    }
+
+    private static Product buildProduct(ResultSet result) throws SQLException {
+        return new Product(result.getLong("id"),
+                result.getString("name"),
+                result.getString("description"),
+                result.getBigDecimal("price"),
+                result.getInt("quantity"));
     }
 
     @Override
@@ -90,11 +95,7 @@ public class ProductDao implements Dao<Long, Product> {
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                product = new Product(result.getLong("id"),
-                        result.getString("name"),
-                        result.getString("description"),
-                        result.getBigDecimal("price"),
-                        result.getInt("quantity"));
+                product = buildProduct(result);
             }
             return Optional.ofNullable(product);
         } catch (SQLException e) {

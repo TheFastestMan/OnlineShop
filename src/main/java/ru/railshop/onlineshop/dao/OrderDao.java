@@ -6,6 +6,7 @@ import ru.railshop.onlineshop.entity.Product;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -68,15 +69,19 @@ public class OrderDao implements Dao<Long, Order> {
             var result = prepareStatement.executeQuery();
 
             while (result.next())
-                orders.add(new Order(result.getLong("id"),
-                                result.getTimestamp("order_date").toLocalDateTime(),
-                                OrderStatus.valueOf(result.getString("status"))
-                        )
+                orders.add(buildOrder(result)
                 );
             return orders;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
+    }
+
+    private static Order buildOrder(ResultSet result) throws SQLException {
+        return new Order(result.getLong("id"),
+                result.getTimestamp("order_date").toLocalDateTime(),
+                OrderStatus.valueOf(result.getString("status"))
+        );
     }
 
     @Override
@@ -89,9 +94,7 @@ public class OrderDao implements Dao<Long, Order> {
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                order = new Order(result.getLong("id"),
-                        result.getTimestamp("order_date").toLocalDateTime(),
-                        OrderStatus.valueOf(result.getString("status")));
+                order = buildOrder(result);
             }
             return Optional.ofNullable(order);
         } catch (SQLException e) {

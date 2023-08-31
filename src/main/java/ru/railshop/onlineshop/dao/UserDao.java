@@ -4,6 +4,7 @@ import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -68,14 +69,18 @@ public class UserDao implements Dao<Long, User> {
             var result = prepareStatement.executeQuery();
 
             while (result.next())
-                users.add(new User(result.getLong("id"),
-                        result.getString("username"),
-                        result.getString("password"),
-                        result.getString("email")));
+                users.add(buildUser(result));
             return users;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
+    }
+
+    private static User buildUser(ResultSet result) throws SQLException {
+        return new User(result.getLong("id"),
+                result.getString("username"),
+                result.getString("password"),
+                result.getString("email"));
     }
 
     @Override
@@ -88,10 +93,7 @@ public class UserDao implements Dao<Long, User> {
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                user = new User(result.getLong("id"),
-                        result.getString("username"),
-                        result.getString("password"),
-                        result.getString("email"));
+                user = buildUser(result);
             }
             return Optional.ofNullable(user);
         } catch (SQLException e) {

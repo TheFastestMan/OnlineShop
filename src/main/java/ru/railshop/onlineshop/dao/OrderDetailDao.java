@@ -4,6 +4,7 @@ import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -71,25 +72,29 @@ public class OrderDetailDao implements Dao<Long, OrderDetail> {
             var result = prepareStatement.executeQuery();
 
             while (result.next())
-                orderDetails.add(new OrderDetail(result.getLong("id"),
-                                new Order(result.getLong("id"),
-                                        result.getTimestamp("order_date").toLocalDateTime(),
-                                        OrderStatus.valueOf(result.getString("status"))
-                                ),
-                                new Product(
-                                        result.getLong("id"),
-                                        result.getString("name"),
-                                        result.getString("description"),
-                                        result.getBigDecimal("price"),
-                                        result.getInt("quantity")
-                                ),
-                                result.getInt("quantity")
-                        )
+                orderDetails.add( buildOrderDetail(result)
                 );
             return orderDetails;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
+    }
+
+    private static OrderDetail buildOrderDetail(ResultSet result) throws SQLException {
+        return new OrderDetail(result.getLong("id"),
+                new Order(result.getLong("id"),
+                        result.getTimestamp("order_date").toLocalDateTime(),
+                        OrderStatus.valueOf(result.getString("status"))
+                ),
+                new Product(
+                        result.getLong("id"),
+                        result.getString("name"),
+                        result.getString("description"),
+                        result.getBigDecimal("price"),
+                        result.getInt("quantity")
+                ),
+                result.getInt("quantity")
+        );
     }
 
 
@@ -103,20 +108,7 @@ public class OrderDetailDao implements Dao<Long, OrderDetail> {
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                orderDetail = new OrderDetail(result.getLong("id"),
-                        new Order(result.getLong("id"),
-                                result.getTimestamp("order_date").toLocalDateTime(),
-                                OrderStatus.valueOf(result.getString("status"))
-                        ),
-                        new Product(
-                                result.getLong("id"),
-                                result.getString("name"),
-                                result.getString("description"),
-                                result.getBigDecimal("price"),
-                                result.getInt("quantity")
-                        ),
-                        result.getInt("quantity")
-                );
+                orderDetail = buildOrderDetail(result);
             }
             return Optional.ofNullable(orderDetail);
         } catch (SQLException e) {

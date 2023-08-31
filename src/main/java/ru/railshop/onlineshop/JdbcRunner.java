@@ -23,7 +23,7 @@ public class JdbcRunner {
         //userDao.update(user9);
 
         // Test Find All
-        //System.out.println(userDao.findAll());
+        System.out.println(userDao.findAll());
 
         // Test Find By ID
         //System.out.println(userDao.findById(10L));
@@ -91,10 +91,10 @@ public class JdbcRunner {
         //reviewDao.update(review);
 
         // Test Find All
-        //System.out.println(reviewDao.findAll());
+//        System.out.println(reviewDao.findAll());
 
         // Test Find By ID
-        //System.out.println(reviewDao.findById(1L));
+//        System.out.println(reviewDao.findById(1L));
 
         // Test Delete
         //reviewDao.delete(10L);
@@ -136,10 +136,10 @@ public class JdbcRunner {
         //cartDao.update(cart);
 
         // Test Find All
-        //System.out.println(cartDao.findAll());
+//        System.out.println(cartDao.findAll());
 
         // Test Find By ID
-        //System.out.println(cartDao.findById(1L));
+//        System.out.println(cartDao.findById(2L));
 
         // Test Delete
         //cartDao.delete(10L);
@@ -158,10 +158,10 @@ public class JdbcRunner {
         //cartItemDao.update(cartItem);
 
         // Test Find All
-        //System.out.println(cartItemDao.findAll());
+//        System.out.println(cartItemDao.findAll());
 
         // Test Find By ID
-        //System.out.println(cartItemDao.findById(1L));
+//        System.out.println(cartItemDao.findById(1L));
 
         // Test Delete
         //cartItemDao.delete(10L);

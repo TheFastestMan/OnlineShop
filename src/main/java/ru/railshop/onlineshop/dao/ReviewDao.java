@@ -5,6 +5,7 @@ import ru.railshop.onlineshop.entity.Review;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -69,21 +70,25 @@ public class ReviewDao implements Dao<Long, Review> {
             var result = prepareStatement.executeQuery();
 
             while (result.next())
-                reviews.add(new Review(result.getLong("id"),
-                        new Product(
-                                result.getLong("id"),
-                                result.getString("name"),
-                                result.getString("description"),
-                                result.getBigDecimal("price"),
-                                result.getInt("quantity")),
-
-                        result.getString("review_text"),
-                        result.getInt("rating"))
+                reviews.add(buildReview(result, "id")
                 );
             return reviews;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
+    }
+
+    private static Review buildReview(ResultSet result, String id) throws SQLException {
+        return new Review(result.getLong("id"),
+                new Product(
+                        result.getLong(id),
+                        result.getString("name"),
+                        result.getString("description"),
+                        result.getBigDecimal("price"),
+                        result.getInt("quantity")),
+
+                result.getString("review_text"),
+                result.getInt("rating"));
     }
 
     @Override
@@ -96,16 +101,7 @@ public class ReviewDao implements Dao<Long, Review> {
             var result = prepareStatement.executeQuery();
 
             while (result.next()) {
-                review = new Review(result.getLong("id"),
-                        new Product(
-                                result.getLong("product_id"),
-                                result.getString("name"),
-                                result.getString("description"),
-                                result.getBigDecimal("price"),
-                                result.getInt("quantity")),
-
-                        result.getString("review_text"),
-                        result.getInt("rating"));
+                review = buildReview(result, "product_id");
             }
             return Optional.ofNullable(review);
         } catch (SQLException e) {

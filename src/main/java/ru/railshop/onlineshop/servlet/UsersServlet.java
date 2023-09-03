@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.service.UserService;
+import ru.railshop.onlineshop.util.JspHelper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,21 +22,9 @@ public class UsersServlet extends HttpServlet {
         resp.setContentType("text/html");
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        try (var writer = resp.getWriter()) {
-            writer.write("<h1>List of Users:</h1>");
-            writer.write("<ul>");
+        req.setAttribute("users", userService.findAllUser());
+        req.getRequestDispatcher(JspHelper.getJspFormat("users")).forward(req, resp);
 
-            userService.findAllUser().stream().forEach(userDto ->
-                    writer.write("""
-                            <li>
-                            <a href ='/user?userId=%d'>%s</a>
-                            </li>
-                            """.formatted(userDto.id(), userDto.description())));
-
-            writer.write("</ul>");
-        } catch (DaoException e) {
-            throw new DaoException(e);
-        }
     }
 }
 

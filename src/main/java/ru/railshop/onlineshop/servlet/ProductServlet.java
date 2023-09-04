@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.railshop.onlineshop.service.ProductService;
+import ru.railshop.onlineshop.util.JspHelper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,16 +21,7 @@ public class ProductServlet extends HttpServlet {
         resp.setContentType("text/html");
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        try (var writer = resp.getWriter()) {
-            writer.write("<h1>List of products</h1>");
-            writer.write("<ul>");
-            productService.findAllProduct().stream().forEach(productDto ->
-                    writer.write("""
-                            <li>
-                            %s
-                            </li>
-                            """.formatted(productDto.description())));
-            writer.write("</ul>");
-        }
+        req.setAttribute("products", productService.findAllProduct());
+        req.getRequestDispatcher(JspHelper.getJspFormat("products")).forward(req, resp);
     }
 }

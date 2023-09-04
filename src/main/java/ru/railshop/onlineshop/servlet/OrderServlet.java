@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.railshop.onlineshop.service.OrderService;
+import ru.railshop.onlineshop.util.JspHelper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,17 +21,7 @@ public class OrderServlet extends HttpServlet {
         resp.setContentType("text/html");
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        try (var writer = resp.getWriter()) {
-            writer.write("<h1> List of orders </h1>");
-            writer.write("<ul>");
-            orderService.findAllOrder().stream().forEach(orderDto ->
-                    writer.write("""
-                            <li>
-                            %s-%s 
-                            </li>
-                            """.formatted(orderDto.id(), orderDto.orderDateAndStatus())));
-            writer.write("</ul>");
-
-        }
+        req.setAttribute("orders", orderService.findAllOrder());
+        req.getRequestDispatcher(JspHelper.getJspFormat("orders")).forward(req, resp);
     }
 }

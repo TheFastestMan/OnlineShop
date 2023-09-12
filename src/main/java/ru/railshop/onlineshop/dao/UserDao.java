@@ -49,7 +49,11 @@ public class UserDao implements Dao<Long, User> {
         try (var connection = ConnectionManager.open();
              var prepareStatement = connection.prepareStatement(UPDATE_SQL)) {
 
-            buildPrepareStatement(prepareStatement, user);
+            prepareStatement.setString(1, user.getUsername());
+            prepareStatement.setString(2, user.getPassword());
+            prepareStatement.setString(3, user.getEmail());
+            prepareStatement.setObject(4, user.getRole());
+            prepareStatement.setObject(5, user.getGender());
 
             return prepareStatement.executeUpdate() > 0;
 
@@ -85,16 +89,6 @@ public class UserDao implements Dao<Long, User> {
                 (Gender) result.getObject("gender"));
     }
 
-    private static void buildPrepareStatement(PreparedStatement prepareStatement, User user) throws SQLException {
-
-        prepareStatement.setString(1, user.getUsername());
-        prepareStatement.setString(2, user.getPassword());
-        prepareStatement.setString(3, user.getEmail());
-        prepareStatement.setLong(4, user.getId());
-        prepareStatement.setObject(5, user.getRole());
-        prepareStatement.setObject(6, user.getGender());
-    }
-
     @Override
     public Optional<User> findById(Long id) {
         try (var connection = ConnectionManager.open();
@@ -120,7 +114,11 @@ public class UserDao implements Dao<Long, User> {
              var prepareStatement = connection.prepareStatement(SAVE_SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
 
-            buildPrepareStatement(prepareStatement, user);
+            prepareStatement.setString(1, user.getUsername());
+            prepareStatement.setString(2, user.getPassword());
+            prepareStatement.setString(3, user.getEmail());
+            prepareStatement.setObject(4, user.getRole());
+            prepareStatement.setObject(5, user.getGender());
 
             prepareStatement.executeUpdate();
 

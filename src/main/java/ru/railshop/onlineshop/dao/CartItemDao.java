@@ -29,7 +29,7 @@ public class CartItemDao implements Dao<Long, CartItem> {
 
     private static final String FIND_ALL_SQL = """
             SELECT  c_i.id, c_i.cart_id, c.user_id, c.created_at,
-                       c.user_id, u.username, u.password, u.email,
+                       c.user_id, u.username, u.password, u.email, u.role, u.gender,
                        c_i.product_id, p.name, p.description, p.price, p.quantity,
                        c_i.quantity
             FROM cart_items c_i
@@ -86,7 +86,9 @@ public class CartItemDao implements Dao<Long, CartItem> {
                         new User(result.getLong("id"),
                                 result.getString("username"),
                                 result.getString("password"),
-                                result.getString("email")
+                                result.getString("email"),
+                                (Role) result.getObject("role"),
+                                (Gender) result.getObject("gender")
                         ),
                         result.getTimestamp("created_at").toLocalDateTime()
                 ),

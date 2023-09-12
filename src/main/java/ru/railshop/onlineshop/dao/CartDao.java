@@ -1,6 +1,8 @@
 package ru.railshop.onlineshop.dao;
 
 import ru.railshop.onlineshop.entity.Cart;
+import ru.railshop.onlineshop.entity.Gender;
+import ru.railshop.onlineshop.entity.Role;
 import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
@@ -74,7 +76,9 @@ public class CartDao implements Dao<Long, Cart> {
                                 result.getLong("id"),
                                 result.getString("username"),
                                 result.getString("password"),
-                                result.getString("email")),
+                                result.getString("email"),
+                                (Role) result.getObject("role"),
+                                (Gender) result.getObject("gender")),
                         result.getTimestamp("created_at").toLocalDateTime())
                 );
             return carts;
@@ -108,7 +112,9 @@ public class CartDao implements Dao<Long, Cart> {
                         result.getLong("id"),
                         result.getString("username"),
                         result.getString("password"),
-                        result.getString("email")
+                        result.getString("email"),
+                        (Role) result.getObject("role"),
+                        (Gender) result.getObject("gender")
                 ),
 
                 result.getTimestamp("created_at").toLocalDateTime()

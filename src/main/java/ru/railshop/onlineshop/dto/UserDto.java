@@ -1,5 +1,9 @@
 package ru.railshop.onlineshop.dto;
 
+import lombok.Builder;
+import lombok.Value;
+
+
 public record UserDto (Long id, String description){
 
     @Override

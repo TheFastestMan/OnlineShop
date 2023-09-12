@@ -14,7 +14,7 @@ public class JdbcRunner {
          */
 
         UserDao userDao = UserDao.getInstance();
-        User user9 = new User(9L, "user9", "password9", "user9@example.com");
+       // User user9 = new User(9L, "user9", "password9", "user9@example.com");
 
         // Test Save
         //userDao.save(user9);
@@ -127,7 +127,7 @@ public class JdbcRunner {
 
         LocalDateTime createdAt = LocalDateTime.of(2020, 01, 01, 07, 25);
         CartDao cartDao = CartDao.getInstance();
-        Cart cart = new Cart(9L, user9, createdAt);
+       // Cart cart = new Cart(9L, user9, createdAt);
 
         // Test Save
         //cartDao.save(cart);
@@ -149,7 +149,7 @@ public class JdbcRunner {
          */
 
         CartItemDao cartItemDao = CartItemDao.getInstance();
-        CartItem cartItem = new CartItem(7L, cart, product, 11);
+        //CartItem cartItem = new CartItem(7L, cart, product, 11);
 
         // Test Save
         //cartItemDao.save(cartItem);

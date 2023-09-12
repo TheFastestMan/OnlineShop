@@ -1,9 +1,12 @@
 package ru.railshop.onlineshop.dao;
 
+import ru.railshop.onlineshop.entity.Gender;
+import ru.railshop.onlineshop.entity.Role;
 import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,20 +20,20 @@ public class UserDao implements Dao<Long, User> {
 
     private static final String SAVE_SQL = """
             INSERT INTO users (
-            username, password, email
+            username, password, email, role, gender
             ) 
             values 
-            (?,?,?);
+            (?,?,?,?,?);
             """;
 
     private static final String UPDATE_SQL = """
             UPDATE users
-             SET username = ?, password = ?, email = ?
+             SET username = ?, password = ?, email = ?, role = ?, gender = ?
             WHERE id = ?
             """;
 
     private static final String FIND_ALL_SQL = """
-            SELECT id, username, password, email FROM users
+            SELECT id, username, password, email, role, gender FROM users
             """;
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + """
             WHERE id = ?;
@@ -46,10 +49,7 @@ public class UserDao implements Dao<Long, User> {
         try (var connection = ConnectionManager.open();
              var prepareStatement = connection.prepareStatement(UPDATE_SQL)) {
 
-            prepareStatement.setString(1, user.getUsername());
-            prepareStatement.setString(2, user.getPassword());
-            prepareStatement.setString(3, user.getEmail());
-            prepareStatement.setLong(4, user.getId());
+            buildPrepareStatement(prepareStatement, user);
 
             return prepareStatement.executeUpdate() > 0;
 
@@ -80,7 +80,19 @@ public class UserDao implements Dao<Long, User> {
         return new User(result.getLong("id"),
                 result.getString("username"),
                 result.getString("password"),
-                result.getString("email"));
+                result.getString("email"),
+                (Role) result.getObject("role"),
+                (Gender) result.getObject("gender"));
+    }
+
+    private static void buildPrepareStatement(PreparedStatement prepareStatement, User user) throws SQLException {
+
+        prepareStatement.setString(1, user.getUsername());
+        prepareStatement.setString(2, user.getPassword());
+        prepareStatement.setString(3, user.getEmail());
+        prepareStatement.setLong(4, user.getId());
+        prepareStatement.setObject(5, user.getRole());
+        prepareStatement.setObject(6, user.getGender());
     }
 
     @Override
@@ -108,16 +120,13 @@ public class UserDao implements Dao<Long, User> {
              var prepareStatement = connection.prepareStatement(SAVE_SQL,
                      Statement.RETURN_GENERATED_KEYS)) {
 
-            prepareStatement.setString(1, user.getUsername());
-            prepareStatement.setString(2, user.getPassword());
-            prepareStatement.setString(3, user.getEmail());
+            buildPrepareStatement(prepareStatement, user);
 
             prepareStatement.executeUpdate();
 
             var keys = prepareStatement.getGeneratedKeys();
-
             if (keys.next())
-                user.setId(keys.getLong("id"));
+                user.setId(keys.getObject("id", Long.class));
             return user;
 
         } catch (SQLException e) {

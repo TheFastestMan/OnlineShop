@@ -2,17 +2,17 @@ package ru.railshop.onlineshop.entity;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
-@ToString
-@EqualsAndHashCode
+@Builder
 public class User {
 
     private Long id;
     private String username;
     private String password;
     private String email;
+    private Role role;
+    private Gender gender;
 
 }
 

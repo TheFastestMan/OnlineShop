@@ -118,14 +118,14 @@ public class UserDao implements Dao<Long, User> {
             prepareStatement.setString(1, user.getUsername());
             prepareStatement.setString(2, user.getPassword());
             prepareStatement.setString(3, user.getEmail());
-            prepareStatement.setObject(4, user.getRole());
-            prepareStatement.setObject(5, user.getGender());
+            prepareStatement.setString(4, String.valueOf(user.getRole()));
+            prepareStatement.setString(5, String.valueOf(user.getGender()));
 
             prepareStatement.executeUpdate();
 
             var keys = prepareStatement.getGeneratedKeys();
             if (keys.next())
-                user.setId(keys.getObject("id", Long.class));
+                user.setId(keys.getLong("id"));
             return user;
 
         } catch (SQLException e) {

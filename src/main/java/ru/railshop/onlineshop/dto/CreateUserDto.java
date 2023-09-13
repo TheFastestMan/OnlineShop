@@ -5,7 +5,6 @@ import lombok.Value;
 import ru.railshop.onlineshop.entity.Gender;
 import ru.railshop.onlineshop.entity.Role;
 
-@Builder
 @Value
 public class CreateUserDto {
  String username;

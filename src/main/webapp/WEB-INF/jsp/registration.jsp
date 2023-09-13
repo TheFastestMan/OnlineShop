@@ -13,8 +13,8 @@
 </head>
 <body>
 <form action="/registration" method="post">
-    <label for="name"> Name:
-        <input type="text" name="name" id="name">
+    <label for="username"> Name:
+        <input type="text" name="username" id="username">
     </label>
 
     <label for="password"> Password:

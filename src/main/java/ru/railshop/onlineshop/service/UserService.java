@@ -4,7 +4,10 @@ import ru.railshop.onlineshop.dao.UserDao;
 import ru.railshop.onlineshop.dto.CreateUserDto;
 import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.entity.User;
+import ru.railshop.onlineshop.exception.ValidationException;
 import ru.railshop.onlineshop.mapper.CreateUserMapper;
+import ru.railshop.onlineshop.validator.CreateUserValidator;
+import ru.railshop.onlineshop.validator.ValidateResult;
 
 
 import java.util.List;
@@ -16,6 +19,8 @@ public class UserService {
     private final static UserService INSTANCE = new UserService();
     private final UserDao userDao = UserDao.getInstance();
     private final CreateUserMapper createUserMapper = CreateUserMapper.getInstance();
+
+    private final CreateUserValidator createUserValidator = CreateUserValidator.getInstance();
 
     public List<UserDto> findAllUser() {
         return userDao.findAll().stream()
@@ -36,6 +41,13 @@ public class UserService {
     }
 
      public User create(CreateUserDto createUserDto){
+
+        var validationResult = createUserValidator.isValid(createUserDto);
+
+        if (!validationResult.isValid()){
+            throw new ValidationException(validationResult.getErrors() );
+        }
+
         var mappedUser = createUserMapper.mapFrom(createUserDto);
         var result = userDao.save(mappedUser);
         return result;

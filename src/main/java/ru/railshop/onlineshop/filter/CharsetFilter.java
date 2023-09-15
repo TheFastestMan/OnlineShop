@@ -1,11 +1,17 @@
 package ru.railshop.onlineshop.filter;
 
-import java.util.logging.Filter;
-import java.util.logging.LogRecord;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+@WebFilter("/*")
 public class CharsetFilter implements Filter {
+
     @Override
-    public boolean isLoggable(LogRecord record) {
-        return false;
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        servletRequest.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        servletResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }

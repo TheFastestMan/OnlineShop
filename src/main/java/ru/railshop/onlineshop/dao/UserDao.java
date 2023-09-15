@@ -6,10 +6,7 @@ import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConnectionManager;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +39,26 @@ public class UserDao implements Dao<Long, User> {
             DELETE FROM users WHERE
             id = ?;
             """;
+    private static final String GET_BY_EMAIL_AND_PASSWORD_SQL = """
+            SELECT * FROM users WHERE email = ? AND password = ?;
+            """;
+
+    public Optional<User> setGetByEmailAndPassword(String email, String password) {
+        try (var connection = ConnectionManager.open();
+             var prepareStatement = connection.prepareStatement(GET_BY_EMAIL_AND_PASSWORD_SQL)) {
+            prepareStatement.setString(1, email);
+            prepareStatement.setString(2, password);
+
+            var result = prepareStatement.executeQuery();
+            User user = null;
+            while (result.next()) {
+                user = buildUser(result);
+            }
+            return Optional.ofNullable(user);
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
 
     @Override
     public boolean update(User user) {

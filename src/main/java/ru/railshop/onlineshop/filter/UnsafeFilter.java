@@ -2,7 +2,6 @@ package ru.railshop.onlineshop.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.railshop.onlineshop.dto.UserDto;

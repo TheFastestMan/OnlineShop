@@ -1,14 +1,12 @@
 package ru.railshop.onlineshop.service;
 
 import ru.railshop.onlineshop.dao.UserDao;
-import ru.railshop.onlineshop.dto.CreateUserDto;
 import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.ValidationException;
 import ru.railshop.onlineshop.mapper.CreateUserMapper;
 import ru.railshop.onlineshop.mapper.UserMapper;
 import ru.railshop.onlineshop.validator.CreateUserValidator;
-import ru.railshop.onlineshop.validator.ValidateResult;
 
 
 import java.util.List;
@@ -44,15 +42,15 @@ public class UserService {
 
     }
 
-    public User create(CreateUserDto createUserDto) {
+    public User create(UserDto userDto) {
 
-        var validationResult = createUserValidator.isValid(createUserDto);
+        var validationResult = createUserValidator.isValid(userDto);
 
         if (!validationResult.isValid()) {
             throw new ValidationException(validationResult.getErrors());
         }
 
-        var mappedUser = createUserMapper.mapFrom(createUserDto);
+        var mappedUser = createUserMapper.mapFrom(userDto);
         var result = userDao.save(mappedUser);
         return result;
 
@@ -65,7 +63,12 @@ public class UserService {
         return INSTANCE;
     }
 
-    public Optional<CreateUserDto> login(String email, String password) {
-        return userDao.setGetByEmailAndPassword(email, password).map(userMapper::mapTo);
+    public Optional<UserDto> login(String email, String password) {
+        return userDao.setGetByEmailAndPassword(email, password).map(user -> new UserDto(user.getId(),
+                "%s - %s- %s".formatted(
+                        user.getUsername(),
+                        user.getPassword(),
+                        user.getEmail()
+                )));
     }
 }

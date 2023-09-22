@@ -18,11 +18,10 @@
 
     <h1>User:</h1>
     <ul>
-        <li>ID: ${user.id}</li>
-        <li>Username: ${user.username}</li>
-        <li>Email: ${user.email}</li>
-        <li>Role: ${user.role}</li>
-        <li>Gender: ${user.gender}</li>
+        <li>ID: ${user.id()}</li>
+        <li>Username: ${user.username()}</li>
+        <li>Email: ${user.email()}</li>
+        <li>Role: ${user.role()}</li>
     </ul>
 
 

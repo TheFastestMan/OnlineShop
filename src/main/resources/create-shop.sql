@@ -7,6 +7,8 @@ CREATE TABLE users
     email    varchar(100) UNIQUE NOT NULL
 
 );
+ALTER TABLE users ADD role varchar (32)
+ALTER TABLE users ADD gender varchar (32)
 -- Таблица товаров
 CREATE TABLE products
 (

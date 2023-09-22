@@ -24,23 +24,24 @@ public class UserService {
 
     public List<UserDto> findAllUser() {
         return userDao.findAll().stream()
-                .map(user -> new UserDto(user.getId(),
-                        "%s - %s".formatted(
-                                user.getUsername(),
-                                user.getEmail()
-                        ))).collect(Collectors.toList());
+                .map(user -> UserDto.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .build())
+                .collect(Collectors.toList());
     }
+
 
     public Optional<UserDto> findUserById(Long id) {
-
-        return userDao.findById(id).map(user -> new UserDto(user.getId(),
-                "%s - %s- %s".formatted(
-                        user.getUsername(),
-                        user.getPassword(),
-                        user.getEmail()
-                )));
-
+        return userDao.findById(id)
+                .map(user -> UserDto.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .build());
     }
+
 
     public User create(UserDto userDto) {
 
@@ -64,11 +65,13 @@ public class UserService {
     }
 
     public Optional<UserDto> login(String email, String password) {
-        return userDao.setGetByEmailAndPassword(email, password).map(user -> new UserDto(user.getId(),
-                "%s - %s- %s".formatted(
-                        user.getUsername(),
-                        user.getPassword(),
-                        user.getEmail()
-                )));
+        return userDao.findByEmailAndPassword(email, password)
+                .map(user -> UserDto.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .build());
     }
+
+
 }

@@ -16,8 +16,15 @@
 <h1>User:</h1>
 <ul>
 
-    <li>ID: ${user.get().id()}</li>
-    <li>Description: ${user.get().description()}</li>
+    <h1>User:</h1>
+    <ul>
+        <li>ID: ${user.id}</li>
+        <li>Username: ${user.username}</li>
+        <li>Email: ${user.email}</li>
+        <li>Role: ${user.role}</li>
+        <li>Gender: ${user.gender}</li>
+    </ul>
+
 
 </ul>
 </body>

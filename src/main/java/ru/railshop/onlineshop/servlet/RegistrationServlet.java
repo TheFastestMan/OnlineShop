@@ -5,11 +5,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.entity.Gender;
 import ru.railshop.onlineshop.entity.Role;
 import ru.railshop.onlineshop.exception.ValidationException;
 import ru.railshop.onlineshop.service.UserService;
 import ru.railshop.onlineshop.util.JspHelper;
+import ru.railshop.onlineshop.validator.CreateUserValidator;
+import ru.railshop.onlineshop.validator.ValidateResult;
 
 import java.io.IOException;
 
@@ -17,6 +20,7 @@ import java.io.IOException;
 public class RegistrationServlet extends HttpServlet {
 
     private final UserService userService = UserService.getInstance();
+    private final CreateUserValidator userValidator = CreateUserValidator.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,16 +37,28 @@ public class RegistrationServlet extends HttpServlet {
         String role = req.getParameter("role");
         String gender = req.getParameter("gender");
 
-        CreateUserDto createUserDto = new CreateUserDto(name, password, email, role, gender);
+        UserDto userDto = UserDto.builder()
+                .username(name)
+                .email(email)
+                .password(password)
+                .role(role)
+                .gender(gender)
+                .build();
+
+        ValidateResult validationResult = userValidator.isValid(userDto);
+
+        if (!validationResult.isValid()) {
+            req.setAttribute("errors", validationResult.getErrors());
+            doGet(req, resp);
+            return;
+        }
 
         try {
-            userService.create(createUserDto);
+            userService.create(userDto);
             resp.sendRedirect("login");
         } catch (ValidationException e) {
             req.setAttribute("errors", e.getErrors());
             doGet(req, resp);
-
         }
-
     }
 }

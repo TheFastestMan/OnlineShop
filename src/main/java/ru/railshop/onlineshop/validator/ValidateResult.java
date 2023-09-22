@@ -1,7 +1,6 @@
 package ru.railshop.onlineshop.validator;
 
 import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 

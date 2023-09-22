@@ -5,27 +5,26 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.railshop.onlineshop.service.UserService;
+import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.util.JspHelper;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 
 @WebServlet("/user")
 public class UserServlet extends HttpServlet {
-    private final UserService userService = UserService.getInstance();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html");
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        UserDto user = (UserDto) req.getSession().getAttribute("user");
 
-        Long userId = Long.valueOf(req.getParameter("userId"));
+        if (user == null) {
+            // Handle the scenario when the user is not logged in or session expired
+            req.setAttribute("error", "Please login to view user details.");
+            req.getRequestDispatcher(JspHelper.getJspFormat("errorPage")).forward(req, resp);
+            return;
+        }
 
-        req.setAttribute("user", userService.findUserById(userId));
+        // If user exists in session, show user details
+        req.setAttribute("user", user);
         req.getRequestDispatcher(JspHelper.getJspFormat("user")).forward(req, resp);
-
     }
 }
-

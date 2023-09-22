@@ -25,13 +25,18 @@ public final class ConnectionManager {
 
     public static Connection open() {
         try {
-            return DriverManager.getConnection(PropertiesUtil.get(URL_KEY),
+            Connection connection = DriverManager.getConnection(
+                    PropertiesUtil.get(URL_KEY),
                     PropertiesUtil.get(USERNAME_KEY),
-                    PropertiesUtil.get(PASSWORD_KEY));
+                    PropertiesUtil.get(PASSWORD_KEY)
+            );
+            connection.setAutoCommit(true);  // This line ensures each SQL operation will automatically be committed
+            return connection;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     private ConnectionManager() {
     }

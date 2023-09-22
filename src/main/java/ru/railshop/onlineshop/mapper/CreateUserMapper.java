@@ -11,9 +11,15 @@ public class CreateUserMapper implements Mapper<User, UserDto> {
     @Override
     public User mapFrom(UserDto object) {
         return User.builder()
-                .username(object.description())
+                .username(object.username())
+                .email(object.email())
+                .password(object.password())
+                .role(Role.valueOf(object.role()))  // Assuming Role is an enum and you're using strings in the DTO
+                .gender(Gender.valueOf(object.gender())) // Similarly for Gender
                 .build();
     }
+
+
 
 
     public static CreateUserMapper getInstance() {

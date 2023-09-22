@@ -43,7 +43,7 @@ public class UserDao implements Dao<Long, User> {
             SELECT * FROM users WHERE email = ? AND password = ?;
             """;
 
-    public Optional<User> setGetByEmailAndPassword(String email, String password) {
+    public Optional<User> findByEmailAndPassword(String email, String password) {
         try (var connection = ConnectionManager.open();
              var prepareStatement = connection.prepareStatement(GET_BY_EMAIL_AND_PASSWORD_SQL)) {
             prepareStatement.setString(1, email);
@@ -69,8 +69,8 @@ public class UserDao implements Dao<Long, User> {
             prepareStatement.setString(1, user.getUsername());
             prepareStatement.setString(2, user.getPassword());
             prepareStatement.setString(3, user.getEmail());
-            prepareStatement.setObject(4, user.getRole());
-            prepareStatement.setObject(5, user.getGender());
+            prepareStatement.setString(4, user.getRole().name());
+            prepareStatement.setString(5, user.getGender().name());
             prepareStatement.setLong(6, user.getId());
 
             return prepareStatement.executeUpdate() > 0;
@@ -99,12 +99,24 @@ public class UserDao implements Dao<Long, User> {
     }
 
     private static User buildUser(ResultSet result) throws SQLException {
+        Role role;
+        Gender gender;
+        try {
+            role = Role.valueOf(result.getString("role"));
+        } catch (IllegalArgumentException e) {
+            throw new DaoException(new Exception("Invalid role in database for user ID: " + result.getLong("id")));
+        }
+        try {
+            gender = Gender.valueOf(result.getString("gender"));
+        } catch (IllegalArgumentException e) {
+            throw new DaoException(new Exception("Invalid gender in database for user ID: " + result.getLong("id")));
+        }
         return new User(result.getLong("id"),
                 result.getString("username"),
                 result.getString("password"),
                 result.getString("email"),
-                (Role) result.getObject("role"),
-                (Gender) result.getObject("gender"));
+                role,
+                gender);
     }
 
     @Override
@@ -127,22 +139,28 @@ public class UserDao implements Dao<Long, User> {
 
     @Override
     public User save(User user) {
+        if (user.getRole() == null || user.getGender() == null) {
+            throw new DaoException(new Exception("Role or Gender is missing for the user"));
+        }
 
         try (var connection = ConnectionManager.open();
-             var prepareStatement = connection.prepareStatement(SAVE_SQL,
-                     Statement.RETURN_GENERATED_KEYS)) {
+             var prepareStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
             prepareStatement.setString(1, user.getUsername());
             prepareStatement.setString(2, user.getPassword());
             prepareStatement.setString(3, user.getEmail());
-            prepareStatement.setString(4, String.valueOf(user.getRole()));
-            prepareStatement.setString(5, String.valueOf(user.getGender()));
+            prepareStatement.setString(4, user.getRole().name());
+            prepareStatement.setString(5, user.getGender().name());
 
-            prepareStatement.executeUpdate();
+            int affectedRows = prepareStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DaoException(new Exception("Failed to insert the user. No rows affected."));
+            }
 
             var keys = prepareStatement.getGeneratedKeys();
-            if (keys.next())
-                user.setId(keys.getLong("id"));
+            if (keys.next()) {
+                user.setId(keys.getLong(1));
+            }
             return user;
 
         } catch (SQLException e) {
@@ -170,4 +188,5 @@ public class UserDao implements Dao<Long, User> {
 
     private UserDao() {
     }
+
 }

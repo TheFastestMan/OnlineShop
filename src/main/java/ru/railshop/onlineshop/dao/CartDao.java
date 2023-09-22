@@ -77,9 +77,9 @@ public class CartDao implements Dao<Long, Cart> {
                                 result.getString("username"),
                                 result.getString("password"),
                                 result.getString("email"),
-                                (Role) result.getObject("role"),
-                                (Gender) result.getObject("gender")),
-                        result.getTimestamp("created_at").toLocalDateTime())
+                                Role.valueOf(result.getString("role")),
+                                Gender.valueOf(result.getString("gender"))),
+                                result.getTimestamp("created_at").toLocalDateTime())
                 );
             return carts;
         } catch (SQLException e) {
@@ -113,8 +113,9 @@ public class CartDao implements Dao<Long, Cart> {
                         result.getString("username"),
                         result.getString("password"),
                         result.getString("email"),
-                        (Role) result.getObject("role"),
-                        (Gender) result.getObject("gender")
+                        Role.valueOf(result.getString("role")),
+                        Gender.valueOf(result.getString("gender"))
+
                 ),
 
                 result.getTimestamp("created_at").toLocalDateTime()

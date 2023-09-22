@@ -9,7 +9,7 @@
 <form action="${pageContext.request.contextPath}/login" method="post">
 
     <label for="email"> Email:
-        <input type="text" name="email" id="email" value="${param.name}" required>
+        <input type="text" name="email" id="email" value="${param.email}" required>
     </label><br>
 
     <label for="password"> Password:
@@ -21,9 +21,9 @@
         <button type="button">Register</button>
     </a>
     <c:if test="${param.error !=null}">
-    <div style="color: red">
-        <span> Email or password is not correct</span>
-    </div>
+        <div style="color: red">
+            <span>Email or password is not correct</span>
+        </div>
     </c:if>
 </form>
 </body>

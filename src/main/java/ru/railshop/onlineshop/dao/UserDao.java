@@ -40,7 +40,7 @@ public class UserDao implements Dao<Long, User> {
             id = ?;
             """;
     private static final String GET_BY_EMAIL_AND_PASSWORD_SQL = """
-            SELECT * FROM users WHERE email = ? AND password = ?;
+            SELECT id, username, password, email, role, gender FROM users WHERE email = ? AND password = ?;
             """;
 
     public Optional<User> findByEmailAndPassword(String email, String password) {

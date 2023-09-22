@@ -14,12 +14,10 @@ public class CreateUserMapper implements Mapper<User, UserDto> {
                 .username(object.username())
                 .email(object.email())
                 .password(object.password())
-                .role(Role.valueOf(object.role()))  // Assuming Role is an enum and you're using strings in the DTO
-                .gender(Gender.valueOf(object.gender())) // Similarly for Gender
+                .role(Role.valueOf(object.role()))
+                .gender(Gender.valueOf(object.gender()))
                 .build();
     }
-
-
 
 
     public static CreateUserMapper getInstance() {

@@ -30,7 +30,7 @@ public final class ConnectionManager {
                     PropertiesUtil.get(USERNAME_KEY),
                     PropertiesUtil.get(PASSWORD_KEY)
             );
-            connection.setAutoCommit(true);  // This line ensures each SQL operation will automatically be committed
+            connection.setAutoCommit(true);
             return connection;
         } catch (SQLException e) {
             throw new RuntimeException(e);

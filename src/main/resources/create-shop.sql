@@ -7,8 +7,34 @@ CREATE TABLE users
     email    varchar(100) UNIQUE NOT NULL
 
 );
-ALTER TABLE users ADD role varchar (32)
-ALTER TABLE users ADD gender varchar (32)
+ALTER TABLE users ADD role varchar (32);
+ALTER TABLE users ADD gender varchar (32);
+
+ALTER SEQUENCE users_id_seq RESTART WITH 1; -- starts id from 1 again
+
+
+ALTER TABLE users
+    ALTER COLUMN username TYPE VARCHAR(100),
+    ALTER COLUMN password TYPE VARCHAR(60),
+    ALTER COLUMN email TYPE VARCHAR(100);
+
+DO $$ BEGIN
+    CREATE TYPE user_role AS ENUM ('ADMIN', 'USER');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE user_gender AS ENUM ('MALE', 'FEMALE');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+ALTER TABLE users
+    ALTER COLUMN role TYPE user_role USING role::user_role,
+    ALTER COLUMN gender TYPE user_gender USING gender::user_gender;
+
+
 -- Таблица товаров
 CREATE TABLE products
 (

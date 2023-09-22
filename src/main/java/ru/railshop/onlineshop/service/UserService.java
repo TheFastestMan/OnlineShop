@@ -28,6 +28,8 @@ public class UserService {
                         .id(user.getId())
                         .username(user.getUsername())
                         .email(user.getEmail())
+                        .role(user.getRole().name())
+                        .gender(user.getGender().name())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -70,7 +72,7 @@ public class UserService {
                         .id(user.getId())
                         .username(user.getUsername())
                         .email(user.getEmail())
-                        .role(user.getRole().name())  // Add this line
+                        .role(user.getRole().name())
                         .build());
     }
 

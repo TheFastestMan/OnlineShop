@@ -7,17 +7,19 @@ public class UserMapper {
 
     private static final UserMapper INSTANCE = new UserMapper();
 
-    private UserMapper() {}  // private constructor to ensure singleton pattern
+    private UserMapper() {
+    }
 
     public UserDto mapTo(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .password(user.getPassword()) // Assuming User has a getPassword() method.
+                .password(user.getPassword())
+                .role(user.getRole().name())
+                .gender(user.getGender().name())
                 .build();
     }
-
 
 
     public static UserMapper getInstance() {

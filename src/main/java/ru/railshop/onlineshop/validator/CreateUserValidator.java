@@ -27,7 +27,7 @@ public class CreateUserValidator implements Validator<UserDto> {
 
         if (user.password() == null || user.password().trim().isEmpty()) {
             validateResult.add(Error.of("invalidPassword", "Password is required"));
-        } else if (user.password().length() < 8) {
+        } else if (user.password().length() < 4) {
             validateResult.add(Error.of("shortPassword", "Password should be at least 8 characters"));
         }
 

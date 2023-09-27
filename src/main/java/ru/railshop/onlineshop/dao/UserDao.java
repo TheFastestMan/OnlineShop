@@ -69,8 +69,8 @@ public class UserDao implements Dao<Long, User> {
             prepareStatement.setString(1, user.getUsername());
             prepareStatement.setString(2, user.getPassword());
             prepareStatement.setString(3, user.getEmail());
-            prepareStatement.setString(4, user.getRole().name());
-            prepareStatement.setString(5, user.getGender().name());
+            prepareStatement.setObject(4, user.getRole().name(), Types.OTHER);
+            prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
             prepareStatement.setLong(6, user.getId());
 
             return prepareStatement.executeUpdate() > 0;
@@ -149,8 +149,9 @@ public class UserDao implements Dao<Long, User> {
             prepareStatement.setString(1, user.getUsername());
             prepareStatement.setString(2, user.getPassword());
             prepareStatement.setString(3, user.getEmail());
-            prepareStatement.setString(4, user.getRole().name());
-            prepareStatement.setString(5, user.getGender().name());
+            prepareStatement.setObject(4, user.getRole().name(), Types.OTHER);
+            prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
+
 
             int affectedRows = prepareStatement.executeUpdate();
             if (affectedRows == 0) {

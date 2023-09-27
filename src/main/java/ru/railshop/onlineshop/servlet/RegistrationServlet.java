@@ -34,15 +34,15 @@ public class RegistrationServlet extends HttpServlet {
         String name = req.getParameter("username");
         String password = req.getParameter("password");
         String email = req.getParameter("email");
-        String role = req.getParameter("role");
-        String gender = req.getParameter("gender");
+        Role role = Role.valueOf(req.getParameter("role"));
+        Gender gender = Gender.valueOf(req.getParameter("gender"));
 
         UserDto userDto = UserDto.builder()
                 .username(name)
                 .email(email)
                 .password(password)
-                .role(role)
-                .gender(gender)
+                .role(String.valueOf(role))
+                .gender(String.valueOf(gender))
                 .build();
 
         ValidateResult validationResult = userValidator.isValid(userDto);

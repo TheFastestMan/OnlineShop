@@ -79,18 +79,31 @@ public class UserDao implements Dao<Long, User> {
     @Override
     public User save(User user) {
         Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
             transaction = session.beginTransaction();
             Long id = (Long) session.save(user);
             transaction.commit();
             user.setId(id);
             return user;
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
+            if (transaction != null) {
+                transaction.rollback();
+            }
             throw new DaoException("Error saving user", e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
+/*
+* prepareStatement.setObject(4, user.getRole().name(), Types.OTHER);
+prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
+
+* */
     @Override
     public boolean delete(Long id) {
         Transaction transaction = null;
@@ -109,6 +122,7 @@ public class UserDao implements Dao<Long, User> {
             throw new DaoException("Error deleting user", e);
         }
     }
+
     public Optional<User> findByEmailAndPassword(String email, String password) {
         User user = null;
         try (Session session = sessionFactory.openSession()) {

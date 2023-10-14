@@ -31,11 +31,11 @@ public class CreateUserValidator implements Validator<UserDto> {
             validateResult.add(Error.of("shortPassword", "Password should be at least 8 characters"));
         }
 
-        if (user.role() == null || !isValidRole(user.role())) {
+        if (user.role() == null || !isValidRole(String.valueOf(user.role()))) {
             validateResult.add(Error.of("invalidRole", "Role is missing or invalid"));
         }
 
-        if (user.gender() == null || !isValidGender(user.gender())) {
+        if (user.gender() == null || !isValidGender(String.valueOf(user.gender()))) {
             validateResult.add(Error.of("invalidGender", "Gender is missing or invalid"));
         }
 
@@ -44,21 +44,23 @@ public class CreateUserValidator implements Validator<UserDto> {
 
     private boolean isValidRole(String role) {
         for (Role r : Role.values()) {
-            if (r.name().equals(role)) {
+            if (r.name().equalsIgnoreCase(role)) {
                 return true;
             }
         }
         return false;
     }
 
+
     private boolean isValidGender(String gender) {
         for (Gender g : Gender.values()) {
-            if (g.name().equals(gender)) {
+            if (g.name().equalsIgnoreCase(gender)) {
                 return true;
             }
         }
         return false;
     }
+
 
     public static CreateUserValidator getInstance() {
         return INSTANCE;

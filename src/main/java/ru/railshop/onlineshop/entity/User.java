@@ -1,6 +1,7 @@
 package ru.railshop.onlineshop.entity;
 
 import lombok.*;
+
 import javax.persistence.*;
 
 
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +26,9 @@ public class User {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "user_role")
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "user_gender")
     private Gender gender;
 
 }

@@ -59,3 +59,5 @@ CREATE TABLE cart_items (
                             product_id BIGINT REFERENCES products(id),
                             quantity INTEGER NOT NULL
 );
+
+

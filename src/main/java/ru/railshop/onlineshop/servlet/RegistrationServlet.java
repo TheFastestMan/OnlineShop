@@ -41,8 +41,8 @@ public class RegistrationServlet extends HttpServlet {
                 .username(name)
                 .email(email)
                 .password(password)
-                .role(String.valueOf(role))
-                .gender(String.valueOf(gender))
+                .role(Role.valueOf(String.valueOf(role)))
+                .gender(Gender.valueOf(String.valueOf(gender)))
                 .build();
 
         ValidateResult validationResult = userValidator.isValid(userDto);

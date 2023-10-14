@@ -1,18 +1,32 @@
 package ru.railshop.onlineshop.dao;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import ru.railshop.onlineshop.entity.Product;
 import ru.railshop.onlineshop.exception.DaoException;
+import ru.railshop.onlineshop.util.ConfigurationUtil;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class ProductDao implements Dao<Long, Product> {
 
     private static final ProductDao INSTANCE = new ProductDao();
+
+    ///////////
+    private static SessionFactory sessionFactory;
+
+    public static void initializeSessionFactory() {
+        sessionFactory = ConfigurationUtil
+                .configureWithAnnotatedClasses(Product.class);
+    }
+
+    static {
+        initializeSessionFactory();
+    }
+
+    ///////////
 
     private ProductDao() {
     }
@@ -28,7 +42,14 @@ public class ProductDao implements Dao<Long, Product> {
 
     @Override
     public List<Product> findAll() {
-        return null;
+        List<Product> products;
+        try (Session session = sessionFactory.openSession()) {
+            Query<Product> query = session.createQuery("FROM Product", Product.class);
+            products = query.list();
+        } catch (Exception e) {
+            throw new DaoException("Error retrieving all products", e);
+        }
+        return products;
     }
 
     @Override

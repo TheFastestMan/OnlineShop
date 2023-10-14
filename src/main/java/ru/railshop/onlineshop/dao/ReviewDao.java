@@ -1,8 +1,11 @@
 package ru.railshop.onlineshop.dao;
 
+import org.hibernate.SessionFactory;
+import ru.railshop.onlineshop.entity.Cart;
 import ru.railshop.onlineshop.entity.Product;
 import ru.railshop.onlineshop.entity.Review;
 import ru.railshop.onlineshop.exception.DaoException;
+import ru.railshop.onlineshop.util.ConfigurationUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +16,20 @@ import java.util.Optional;
 
 public class ReviewDao implements Dao<Long, Review> {
     private static final ReviewDao INSTANCE = new ReviewDao();
+
+    ///////////
+    private static SessionFactory sessionFactory;
+
+    public static void initializeSessionFactory() {
+        sessionFactory = ConfigurationUtil
+                .configureWithAnnotatedClasses(Review.class);
+    }
+
+    static {
+        initializeSessionFactory();
+    }
+
+    ///////////
 
     private ReviewDao() {
     }

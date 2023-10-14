@@ -1,7 +1,9 @@
 package ru.railshop.onlineshop.dao;
 
+import org.hibernate.SessionFactory;
 import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.exception.DaoException;
+import ru.railshop.onlineshop.util.ConfigurationUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +15,19 @@ import java.util.Optional;
 public class OrderDetailDao implements Dao<Long, OrderDetail> {
     private static final OrderDetailDao INSTANCE = new OrderDetailDao();
 
+    ///////////
+    private static SessionFactory sessionFactory;
+
+    public static void initializeSessionFactory() {
+        sessionFactory = ConfigurationUtil
+                .configureWithAnnotatedClasses(OrderDetail.class);
+    }
+
+    static {
+        initializeSessionFactory();
+    }
+
+    ///////////
 
     private OrderDetailDao() {
     }

@@ -1,23 +1,28 @@
 package ru.railshop.onlineshop.dao;
 
+import org.hibernate.SessionFactory;
 import ru.railshop.onlineshop.entity.Cart;
-import ru.railshop.onlineshop.entity.Gender;
-import ru.railshop.onlineshop.entity.Role;
-import ru.railshop.onlineshop.entity.User;
-import ru.railshop.onlineshop.exception.DaoException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.ArrayList;
+import ru.railshop.onlineshop.util.ConfigurationUtil;
+
 import java.util.List;
 import java.util.Optional;
 
 public class CartDao implements Dao<Long, Cart> {
     private static final CartDao INSTANCE = new CartDao();
+    ///////////
+    private static SessionFactory sessionFactory;
 
+    public static void initializeSessionFactory() {
+        sessionFactory = ConfigurationUtil
+                .configureWithAnnotatedClasses(Cart.class);
+    }
 
+    static {
+        initializeSessionFactory();
+    }
+
+    ///////////
     private CartDao() {
     }
 

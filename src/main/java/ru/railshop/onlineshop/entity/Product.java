@@ -2,18 +2,28 @@ package ru.railshop.onlineshop.entity;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
-@ToString
-@EqualsAndHashCode
+@Builder
+@Entity
+@Table(name = "products")
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String description;
-    private BigDecimal price;
-    private Integer quantity;
 
+    @Column(length = 255, nullable = false)
+    private String name;
+
+    @Column(length = 255, nullable = false)
+    private String description;
+
+    @Column(precision = 10, scale = 2, nullable = false)
+    private BigDecimal price;
+
+    @Column(nullable = false)
+    private Integer quantity;
 }

@@ -2,15 +2,23 @@ package ru.railshop.onlineshop.entity;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
-@ToString
-@EqualsAndHashCode
+@Builder
+@Entity
+@Table(name = "carts")
 public class Cart {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private User userId;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 }

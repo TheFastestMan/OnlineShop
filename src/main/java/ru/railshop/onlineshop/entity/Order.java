@@ -2,15 +2,23 @@ package ru.railshop.onlineshop.entity;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
-@ToString
-@EqualsAndHashCode
+@Builder
+@Entity
+@Table(name = "orders")
 public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private LocalDateTime orderDate;
-    private OrderStatus orderStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50, nullable = false)
+    private OrderStatus status;
 }

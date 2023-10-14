@@ -1,91 +1,61 @@
--- Таблица user
-CREATE TABLE users
-(
-    id       serial PRIMARY KEY,
-    username varchar(50) UNIQUE  NOT NULL,
-    password varchar(100)        NOT NULL,
-    email    varchar(100) UNIQUE NOT NULL
+-- Create ENUM types
+CREATE TYPE user_gender AS ENUM ('MALE', 'FEMALE');
+CREATE TYPE user_role AS ENUM ('ADMIN', 'USER');
+CREATE TYPE order_status AS ENUM ('CREATED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELED');
 
-);
-ALTER TABLE users ADD role varchar (32);
-ALTER TABLE users ADD gender varchar (32);
-
-ALTER SEQUENCE users_id_seq RESTART WITH 1; -- starts id from 1 again
-
-
-ALTER TABLE users
-    ALTER COLUMN username TYPE VARCHAR(100),
-    ALTER COLUMN password TYPE VARCHAR(60),
-    ALTER COLUMN email TYPE VARCHAR(100);
-
-DO $$ BEGIN
-    CREATE TYPE user_role AS ENUM ('ADMIN', 'USER');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-    CREATE TYPE user_gender AS ENUM ('MALE', 'FEMALE');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
-ALTER TABLE users
-    ALTER COLUMN role TYPE user_role USING role::user_role,
-    ALTER COLUMN gender TYPE user_gender USING gender::user_gender;
-
-
--- Таблица товаров
-CREATE TABLE products
-(
-    id          serial primary key,
-    name        varchar(255)   NOT NULL,
-    description varchar(255)   NOT NULL,
-    price       decimal(10, 2) NOT NULL,
-    quantity    int            NOT NULL
+-- Table for users
+CREATE TABLE users (
+                       id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                       username VARCHAR(100) UNIQUE NOT NULL,
+                       password VARCHAR(60) NOT NULL,
+                       email VARCHAR(100) UNIQUE NOT NULL,
+                       role user_role NOT NULL,
+                       gender user_gender
 );
 
--- Таблица заказов
-CREATE TABLE orders
-(
-    id         serial primary key,
-    order_date timestamp   NOT NULL,
-    status     varchar(50) NOT NULL
+-- Table for products
+CREATE TABLE products (
+                          id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                          name VARCHAR(255) NOT NULL,
+                          description VARCHAR(255) NOT NULL,
+                          price DECIMAL(10, 2) NOT NULL,
+                          quantity INTEGER NOT NULL
 );
 
--- Таблица детали заказов
-CREATE TABLE order_details
-(
-    id         serial primary key,
-    order_id   int REFERENCES Orders (id),
-    product_id int REFERENCES Products (id),
-    quantity   int NOT NULL
+-- Table for reviews
+CREATE TABLE reviews (
+                         id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                         product_id BIGINT REFERENCES products(id),
+                         reviewText VARCHAR NOT NULL,
+                         rating INTEGER CHECK (rating >= 1 AND rating <= 5) NOT NULL
 );
 
--- Таблица отзывов
-CREATE TABLE reviews
-(
-    id          serial PRIMARY KEY,
-    product_id  int REFERENCES Products (id),
-    review_text varchar NOT NULL,
-    rating      int CHECK (rating >= 1 AND rating <= 5)
-);
--- Таблица carts
-CREATE TABLE carts
-(
-    id         serial PRIMARY KEY,
-    user_id    int REFERENCES users (id),
-    created_at timestamp NOT NULL DEFAULT current_timestamp
+-- Table for orders
+CREATE TABLE orders (
+                        id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                        orderDate TIMESTAMP NOT NULL,
+                        orderStatus order_status NOT NULL
 );
 
--- Таблица cart_items
-CREATE TABLE cart_items
-(
-    id         serial PRIMARY KEY,
-    cart_id    int REFERENCES carts (id),
-    product_id int REFERENCES products (id),
-    quantity   int NOT NULL
+-- Table for order_details
+CREATE TABLE order_details (
+                               id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                               order_id BIGINT REFERENCES orders(id),
+                               product_id BIGINT REFERENCES products(id),
+                               quantity INTEGER NOT NULL
 );
 
+-- Table for carts
+CREATE TABLE carts (
+                       id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                       user_id BIGINT REFERENCES users(id),
+                       createdAt TIMESTAMP NOT NULL
+);
 
-
+-- Table for cart_items
+CREATE TABLE cart_items (
+                            id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+                            cart_id BIGINT REFERENCES carts(id),
+                            product_id BIGINT REFERENCES products(id),
+                            quantity INTEGER NOT NULL
+);

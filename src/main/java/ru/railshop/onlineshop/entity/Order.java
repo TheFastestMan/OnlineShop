@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 @Table(name = "orders")
@@ -20,5 +21,5 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 }

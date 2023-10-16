@@ -1,7 +1,3 @@
--- Create ENUM types
-CREATE TYPE user_gender AS ENUM ('MALE', 'FEMALE');
-CREATE TYPE user_role AS ENUM ('ADMIN', 'USER');
-CREATE TYPE order_status AS ENUM ('CREATED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELED');
 
 -- Table for users
 CREATE TABLE users (
@@ -9,8 +5,9 @@ CREATE TABLE users (
                        username VARCHAR(100) UNIQUE NOT NULL,
                        password VARCHAR(60) NOT NULL,
                        email VARCHAR(100) UNIQUE NOT NULL,
-                       role user_role NOT NULL,
-                       gender user_gender
+                       role VARCHAR(10) NOT NULL,
+                       gender VARCHAR(10) NOT NULL
+
 );
 
 -- Table for products
@@ -34,7 +31,7 @@ CREATE TABLE reviews (
 CREATE TABLE orders (
                         id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                         orderDate TIMESTAMP NOT NULL,
-                        orderStatus order_status NOT NULL
+                        orderStatus varchar(20) NOT NULL
 );
 
 -- Table for order_details

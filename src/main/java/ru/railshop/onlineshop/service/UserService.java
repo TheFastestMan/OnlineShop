@@ -59,6 +59,7 @@ public class UserService {
         var mappedUser = convertUserDtoToUser(userDto);
 
         System.out.println("Mapped user email: " + mappedUser.getEmail());
+
         var result = userDao.save(mappedUser);
         return result;
     }

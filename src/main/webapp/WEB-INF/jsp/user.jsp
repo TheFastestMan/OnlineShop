@@ -15,14 +15,17 @@
 <body>
 <h1>User:</h1>
 <ul>
+
     <li>ID: ${user.id()}</li>
     <li>Username: ${user.username()}</li>
     <li>Email: ${user.email()}</li>
     <li>Role: ${user.role()}</li>
     <!-- Display admin link if role is ADMIN -->
+<%--    <c:if test="${user.role() eq 'ADMIN'}">--%>
     <c:if test="${user.role() eq 'ADMIN'}">
         <li><a href="/admin">Go to Admin Page</a></li>
     </c:if>
+
 </ul>
 </body>
 </html>

@@ -27,12 +27,20 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
         Optional<UserDto> userOptional = userService.login(email, password);
 
+
+
+
         if (email != null && password != null && userOptional.isPresent()) {
             UserDto user = userOptional.get();
-            req.getSession().setAttribute("user", user);
+
+            System.out.println("User Role after login: " + user.role());
+
+            req.getSession().setAttribute("user", user);  // Set the user in the session only once
+
             resp.sendRedirect("/user");
         } else {
             resp.sendRedirect("/login?error&email=" + email);
         }
+
     }
 }

@@ -17,7 +17,7 @@ public class AdminFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         UserDto user = (UserDto) req.getSession().getAttribute("user");
 
-        if (user == null || !user.role().equals(Role.ADMIN.name())) {
+        if (user == null || !user.role().equals(Role.ADMIN)){
             HttpServletResponse resp = (HttpServletResponse) response;
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             return;

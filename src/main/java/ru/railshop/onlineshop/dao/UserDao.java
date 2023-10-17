@@ -129,8 +129,8 @@ prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
             String hql = "FROM User WHERE email = :email AND password = :password";
             Query<User> query = session.createQuery(hql, User.class);
             query.setParameter("email", email);
-            query.setParameter("password", password);  // Note: In real applications, you should never store plain-text passwords
-            user = query.uniqueResult(); // Returns null if no result found, otherwise returns the single result.
+            query.setParameter("password", password);
+            user = query.uniqueResult();
         } catch (Exception e) {
             throw new DaoException("Error retrieving user by email and password", e);
         }

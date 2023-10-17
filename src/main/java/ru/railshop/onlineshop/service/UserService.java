@@ -20,10 +20,7 @@ public class UserService {
     private final UserDao userDao = UserDao.getInstance();
     private final ModelMapper modelMapper = new ModelMapper();
 
-
     private final CreateUserValidator createUserValidator = CreateUserValidator.getInstance();
-
-
 
     public List<UserDto> findAllUser() {
         return userDao.findAll().stream()
@@ -47,7 +44,6 @@ public class UserService {
                         .build());
     }
 
-
     public User create(UserDto userDto) {
         System.out.println("Received email: " + userDto.email()); // for debug
 
@@ -64,14 +60,13 @@ public class UserService {
         return result;
     }
 
-
     public User convertUserDtoToUser(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
-        user.setEmail(userDto.email());  // Manually set the email
-        user.setPassword(userDto.password());  // Ensure this line is there to set the password
+        user.setEmail(userDto.email());
+        user.setPassword(userDto.password());
         user.setUsername(userDto.username());
-        user.setRole(userDto.role());  // Directly set the role from UserDto
-        user.setGender(userDto.gender());  // Directly set the gender from UserDto
+        user.setRole(userDto.role());
+        user.setGender(userDto.gender());
         return user;
     }
 

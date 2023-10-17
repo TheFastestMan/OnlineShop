@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
 
             System.out.println("User Role after login: " + user.role());
 
-            req.getSession().setAttribute("user", user);  // Set the user in the session only once
+            req.getSession().setAttribute("user", user);
 
             resp.sendRedirect("/user");
         } else {

@@ -1,5 +1,6 @@
 package ru.railshop.onlineshop.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public class UserDao implements Dao<Long, User> {
 
     private static final UserDao INSTANCE = new UserDao();
@@ -52,9 +54,11 @@ public class UserDao implements Dao<Long, User> {
             return true;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
+            log.error("Error updating user", e);
             throw new DaoException("Error updating user", e);
         }
     }
+
 
     @Override
     public List<User> findAll() {
@@ -62,9 +66,11 @@ public class UserDao implements Dao<Long, User> {
             Query<User> query = session.createQuery("FROM User", User.class);
             return query.list();
         } catch (Exception e) {
+            log.error("Error finding all users", e);
             throw new DaoException("Error finding all users", e);
         }
     }
+
 
     @Override
     public Optional<User> findById(Long id) {
@@ -72,6 +78,7 @@ public class UserDao implements Dao<Long, User> {
             User user = session.get(User.class, id);
             return Optional.ofNullable(user);
         } catch (Exception e) {
+            log.error("Error finding user by ID", e);
             throw new DaoException("Error finding user by ID", e);
         }
     }
@@ -86,11 +93,13 @@ public class UserDao implements Dao<Long, User> {
             Long id = (Long) session.save(user);
             transaction.commit();
             user.setId(id);
+            log.info("User with name {} saved", user.getUsername());
             return user;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
+            log.error("Error saving user", e);
             throw new DaoException("Error saving user", e);
         } finally {
             if (session != null) {
@@ -99,11 +108,11 @@ public class UserDao implements Dao<Long, User> {
         }
     }
 
-/*
-* prepareStatement.setObject(4, user.getRole().name(), Types.OTHER);
-prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
+    /*
+    * prepareStatement.setObject(4, user.getRole().name(), Types.OTHER);
+    prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
 
-* */
+    * */
     @Override
     public boolean delete(Long id) {
         Transaction transaction = null;
@@ -119,6 +128,7 @@ prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
             }
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
+            log.error("Error deleting user", e);
             throw new DaoException("Error deleting user", e);
         }
     }
@@ -131,7 +141,11 @@ prepareStatement.setObject(5, user.getGender().name(), Types.OTHER);
             query.setParameter("email", email);
             query.setParameter("password", password);
             user = query.uniqueResult();
+            if (user != null) {
+                log.info("Login user with role: {} and username: {}", user.getRole(), user.getUsername());
+            }
         } catch (Exception e) {
+            log.error("Error retrieving user by email and password", e);
             throw new DaoException("Error retrieving user by email and password", e);
         }
         return Optional.ofNullable(user);

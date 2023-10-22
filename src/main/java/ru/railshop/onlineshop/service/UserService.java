@@ -2,8 +2,10 @@ package ru.railshop.onlineshop.service;
 
 import org.modelmapper.ModelMapper;
 import ru.railshop.onlineshop.dao.UserDao;
+import ru.railshop.onlineshop.dto.ProductDto;
 import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.entity.Gender;
+import ru.railshop.onlineshop.entity.Product;
 import ru.railshop.onlineshop.entity.Role;
 import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.ValidationException;
@@ -70,6 +72,16 @@ public class UserService {
         return user;
     }
 
+    public Product convertProductDtoToProduct(ProductDto productDto) {
+        Product product = modelMapper.map(productDto, Product.class);
+        product.setDescription(productDto.description());
+        product.setOwner(product.getOwner());
+        product.setName(product.getName());
+        product.setPrice(product.getPrice());
+        product.setQuantity(product.getQuantity());
+        return product;
+    }
+
 
     private UserService() {
     }
@@ -90,5 +102,11 @@ public class UserService {
 
     }
 
+    public List<ProductDto> getAllProductsByUserId(Long userId) {
+        List<Product> products = userDao.findAllProductsByUserId(userId);
+        return products.stream()
+                .map(product -> new ProductDto(product.getId(), product.getDescription()))
+                .collect(Collectors.toList());
+    }
 
 }

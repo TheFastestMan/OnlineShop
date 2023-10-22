@@ -25,6 +25,10 @@
     <c:if test="${user.role() eq 'ADMIN'}">
         <li><a href="/admin">Go to Admin Page</a></li>
     </c:if>
+    <!-- Display a link to view the user's products -->
+    <c:if test="${not empty user.productList}">
+        <li><a href="userProducts.jsp?userId=${user.id}">View User's Products</a></li>
+    </c:if>
 
 </ul>
 </body>

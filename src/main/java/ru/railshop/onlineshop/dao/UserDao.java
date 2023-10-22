@@ -5,10 +5,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import ru.railshop.onlineshop.entity.Cart;
-import ru.railshop.onlineshop.entity.Gender;
-import ru.railshop.onlineshop.entity.Role;
-import ru.railshop.onlineshop.entity.User;
+import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConfigurationUtil;
 
@@ -27,7 +24,7 @@ public class UserDao implements Dao<Long, User> {
 
     public static void initializeSessionFactory() {
         sessionFactory = ConfigurationUtil
-                .configureWithAnnotatedClasses(User.class);
+                .configureWithAnnotatedClasses(User.class, Product.class);
     }
 
     static {
@@ -150,5 +147,21 @@ public class UserDao implements Dao<Long, User> {
         }
         return Optional.ofNullable(user);
     }
+
+
+    public List<Product> findAllProductsByUserId(Long userId) {
+        try (Session session = sessionFactory.openSession()) {
+            User user = session.get(User.class, userId);
+            if (user != null) {
+                return user.getProductList();
+            } else {
+                return new ArrayList<>(); // Return an empty list if the user is not found
+            }
+        } catch (Exception e) {
+            log.error("Error retrieving products for user with ID: " + userId, e);
+            throw new DaoException("Error retrieving products for user with ID: " + userId, e);
+        }
+    }
+
 
 }

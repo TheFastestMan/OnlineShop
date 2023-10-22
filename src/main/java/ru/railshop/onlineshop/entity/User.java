@@ -3,6 +3,7 @@ package ru.railshop.onlineshop.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Data
@@ -30,5 +31,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    private List<Product>productList;
 
 }

@@ -4,6 +4,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import ru.railshop.onlineshop.entity.Product;
+import ru.railshop.onlineshop.entity.User;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.ConfigurationUtil;
 
@@ -19,7 +20,7 @@ public class ProductDao implements Dao<Long, Product> {
 
     public static void initializeSessionFactory() {
         sessionFactory = ConfigurationUtil
-                .configureWithAnnotatedClasses(Product.class);
+                .configureWithAnnotatedClasses(Product.class, User.class);
     }
 
     static {

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = "owner")
 @Builder
 @Entity
 @Table(name = "products")

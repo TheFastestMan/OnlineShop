@@ -27,9 +27,6 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
         Optional<UserDto> userOptional = userService.login(email, password);
 
-
-
-
         if (email != null && password != null && userOptional.isPresent()) {
             UserDto user = userOptional.get();
 

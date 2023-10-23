@@ -102,11 +102,6 @@ public class UserService {
 
     }
 
-    public List<ProductDto> getAllProductsByUserId(Long userId) {
-        List<Product> products = userDao.findAllProductsByUserId(userId);
-        return products.stream()
-                .map(product -> new ProductDto(product.getId(), product.getDescription()))
-                .collect(Collectors.toList());
-    }
+
 
 }

@@ -27,6 +27,7 @@ public class RegistrationServlet extends HttpServlet {
         req.setAttribute("roles", Role.values());
         req.setAttribute("genders", Gender.values());
         req.getRequestDispatcher(JspHelper.getJspFormat("registration")).forward(req, resp);
+
     }
 
     @Override

@@ -21,14 +21,14 @@
     <li>Email: ${user.email()}</li>
     <li>Role: ${user.role()}</li>
     <!-- Display admin link if role is ADMIN -->
-<%--    <c:if test="${user.role() eq 'ADMIN'}">--%>
     <c:if test="${user.role() eq 'ADMIN'}">
         <li><a href="/admin">Go to Admin Page</a></li>
     </c:if>
-    <!-- Display a link to view the user's products -->
-    <c:if test="${not empty user.productList}">
-        <li><a href="userProducts.jsp?userId=${user.id}">View User's Products</a></li>
+
+    <c:if test="${not empty user}">
+        <li><a href="userItems?userId=${user.id()}">View User Items</a></li>
     </c:if>
+
 
 </ul>
 </body>

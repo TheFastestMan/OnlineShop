@@ -67,4 +67,16 @@ public class ProductDao implements Dao<Long, Product> {
     public boolean delete(Long id) {
         return false;
     }
+    public List<Product> getItemsByUserId(Long userId) {
+        try (Session session = sessionFactory.openSession()) {
+            String hql = "FROM Product i WHERE i.owner.id = :userId";
+            org.hibernate.query.Query<Product> query = session.createQuery(hql, Product.class);
+            query.setParameter("userId", userId);
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
+

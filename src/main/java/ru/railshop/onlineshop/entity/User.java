@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = "productList")
 @Builder
 @Entity
 @Table(name = "users")
@@ -32,6 +33,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
-    private List<Product>productList;
+    private List<Product> productList;
 
 }

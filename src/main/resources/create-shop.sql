@@ -16,12 +16,8 @@ CREATE TABLE products (
                           name VARCHAR(255) NOT NULL,
                           description VARCHAR(255) NOT NULL,
                           price DECIMAL(10, 2) NOT NULL,
-                          quantity INTEGER NOT NULL,
-                          user_id BIGINT references users (id)
-
+                          quantity INTEGER NOT NULL
 );
-
-drop table products cascade;
 
 -- Table for reviews
 CREATE TABLE reviews (

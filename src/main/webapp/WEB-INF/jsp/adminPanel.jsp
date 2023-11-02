@@ -30,16 +30,16 @@
     <tbody>
     <c:forEach items="${users}" var="user">
         <tr>
-            <td>${user.id()}</td>
-            <td>${user.username()}</td>
-            <td>${user.email()}</td>
+            <td>${user.userId}</td>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
             <td>
                 <c:choose>
-                    <c:when test="${user.role() == 'ADMIN'}">
-                        <span class="role-admin">${user.role()}</span>
+                    <c:when test="${user.role == 'ADMIN'}">
+                        <span class="role-admin">${user.role}</span>
                     </c:when>
                     <c:otherwise>
-                        <span class="role-user">${user.role()}</span>
+                        <span class="role-user">${user.role}</span>
                     </c:otherwise>
                 </c:choose>
             </td>

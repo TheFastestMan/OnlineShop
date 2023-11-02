@@ -6,6 +6,7 @@
     <title>Login</title>
 </head>
 <body>
+<h1>Login</h1>
 <form action="${pageContext.request.contextPath}/login" method="post">
 
     <label for="email"> Email:
@@ -16,7 +17,7 @@
         <input type="password" name="password" id="password" required>
     </label><br>
 
-    <button type="submit">Login </button>
+    <button type="submit">Login</button>
     <a href="${pageContext.request.contextPath}/registration">
         <button type="button">Register</button>
     </a>

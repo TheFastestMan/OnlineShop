@@ -13,9 +13,18 @@
 </head>
 <body>
 <h1> List of products: </h1>
-<c:forEach var="product" items="${requestScope.products}">
-    <li>${product.description()}</li>
-</c:forEach>
+
+
+<form action="${pageContext.request.contextPath}/addToCart" method="post">
+    <c:forEach items="${pr}" var="product">
+        <li>ID: ${product.productId}</li>
+        <li>Name: ${product.productName}</li>
+        <li>Description: ${product.description}</li>
+        <li>Price: ${product.price}</li>
+        <input type="hidden" name="productId" value="${product.productId}"/>
+        <input type="submit" value="Add to Cart"/>
+    </c:forEach>
+</form>
 
 </body>
 </html>

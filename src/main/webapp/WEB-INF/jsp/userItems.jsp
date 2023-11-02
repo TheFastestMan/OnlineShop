@@ -7,11 +7,10 @@
 <body>
 <h1>User Items</h1>
 
-<c:if test="${not empty userItems.products}">
-  <h2>User: ${userItems.userName}</h2>
+<c:if test="${not empty userItems}">
   <ul>
-    <c:forEach items="${userItems.products}" var="product">
-      <li>${product.name}</li>
+    <c:forEach items="${userItems}" var="productDto">
+      <li>${productDto.productName} (ID: ${productDto.productId}) - Price: ${productDto.price}</li>
     </c:forEach>
   </ul>
 </c:if>

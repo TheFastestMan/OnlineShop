@@ -28,6 +28,7 @@ public class AdminFilter implements Filter {
         log.info("User with role {} and name {} has access to the admin page", user.getRole(), user.getUsername());
 
         chain.doFilter(request, response);
+        //cucu
 
     }
 }

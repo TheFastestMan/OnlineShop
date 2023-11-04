@@ -35,20 +35,20 @@ public class LoginServlet extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
         Optional<UserDto> userOptional = userService.login(email, password);
-        log.info("hi00000");
+
         if (email != null && password != null && userOptional.isPresent()) {
             UserDto user = userOptional.get();
-            log.info("hi10101");
+
 
             req.getSession().setAttribute("user", user);
             resp.sendRedirect("/user");
-            log.info("hi20202");
+
         } else {
             resp.sendRedirect("/login?error&email=" + email);
-            log.info("hi30303");
+
         }
 
         log.info("Exiting LoginServlet's doPost method");
-        log.info("hi40404");
+
     }
 }

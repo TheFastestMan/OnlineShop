@@ -1,9 +1,8 @@
 package ru.railshop.onlineshop.dao;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.util.HibernateUtil;
 
@@ -11,8 +10,9 @@ import java.util.List;
 
 public class ProductDao {
     private static final ProductDao INSTANCE = new ProductDao();
+    private static final QProduct qProduct = QProduct.product;
+    private static final QUserProduct qUserProduct = QUserProduct.userProduct;
 
-    ///////////
     private static SessionFactory sessionFactory;
 
     public static void initializeSessionFactory() {
@@ -24,7 +24,6 @@ public class ProductDao {
     static {
         initializeSessionFactory();
     }
-    ///////////
 
     public static ProductDao getInstance() {
         return INSTANCE;
@@ -33,53 +32,38 @@ public class ProductDao {
     private ProductDao() {
     }
 
-    public List<Product> findAllProducts() throws Exception {
+    public List<Product> findAllProducts() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Product", Product.class).list();
+            JPAQuery<Product> query = new JPAQuery<>(session);
+            return query.select(qProduct)
+                    .from(qProduct)
+                    .fetch();
         } catch (Exception e) {
-            throw new Exception("Error retrieving all products", e);
+            throw new RuntimeException("Error retrieving all products", e);
         }
     }
 
     public Product getProductById(Long productId) {
-        Transaction transaction = null;
-        Product product = null;
-
         try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-
-            // Use Hibernate to retrieve the product by its ID
-            product = session.get(Product.class, productId);
-
-            transaction.commit();
+            JPAQuery<Product> query = new JPAQuery<>(session);
+            return query.select(qProduct)
+                    .from(qProduct)
+                    .where(qProduct.productId.eq(productId))
+                    .fetchOne();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            throw new RuntimeException("Error retrieving product by ID: " + productId, e);
         }
-
-        return product;
     }
 
-    public List<Product> getProductsByUserId(Long userId) throws Exception {
-        Transaction transaction = null;
-        List<Product> products = null;
+    public List<Product> getProductsByUserId(Long userId) {
         try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-
-            String hql = "SELECT up.product FROM UserProduct up WHERE up.user.id = :userId";
-            Query<Product> query = session.createQuery(hql, Product.class);
-            query.setParameter("userId", userId);
-            products = query.list();
-
-            transaction.commit();
+            JPAQuery<Product> query = new JPAQuery<>(session);
+            return query.select(qUserProduct.product)
+                    .from(qUserProduct)
+                    .where(qUserProduct.user.userId.eq(userId))
+                    .fetch();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new Exception("Error retrieving products for user ID: " + userId, e);
+            throw new RuntimeException("Error retrieving products for user ID: " + userId, e);
         }
-        return products;
     }
 }

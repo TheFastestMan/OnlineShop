@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.hibernate.Session;
 import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.service.UserService;
 import ru.railshop.onlineshop.util.JspHelper;

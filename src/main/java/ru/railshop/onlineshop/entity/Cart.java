@@ -1,5 +1,6 @@
 package ru.railshop.onlineshop.entity;
 
+
 import lombok.*;
 
 import javax.persistence.*;

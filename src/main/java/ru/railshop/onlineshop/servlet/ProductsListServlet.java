@@ -35,8 +35,7 @@ public class ProductsListServlet extends HttpServlet {
             req.getRequestDispatcher(JspHelper.getJspFormat("products")).forward(req, resp);
         } catch (Exception e) {
             log.error("Error processing the request", e);
-            // You can redirect to an error page or take other actions here.
-            // For simplicity, we're just forwarding to a general error page:
+
             req.getRequestDispatcher(JspHelper.getJspFormat("error")).forward(req, resp);
         }
 

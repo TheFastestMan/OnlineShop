@@ -1,6 +1,5 @@
 package ru.railshop.onlineshop.dao;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -11,12 +10,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-@Slf4j
 public class CartDao {
     private static final CartDao INSTANCE = new CartDao();
 
-    ///////////
     private static SessionFactory sessionFactory;
 
     public static void initializeSessionFactory() {
@@ -28,7 +26,6 @@ public class CartDao {
     static {
         initializeSessionFactory();
     }
-    ///////////
 
     public static CartDao getInstance() {
         return INSTANCE;
@@ -76,13 +73,35 @@ public class CartDao {
             }
         }
     }
+//    private Cart findOrCreateCartForUser(User user, Session session, Date timestamp) {
+//        Cart cart = new Cart();
+//        cart.setUser(user);
+//        cart.setCreatedAt(timestamp);
+//        session.save(cart);
+//        user.getCarts().add(cart);
+//        return cart;
+//    }
 
-    private Cart findOrCreateCartForUser(User user, Session session, Date timestamp) {
-        Cart cart = new Cart();
-        cart.setUser(user);
-        cart.setCreatedAt(timestamp);
-        session.save(cart);
-        user.getCarts().add(cart);
-        return cart;
+    public Cart findOrCreateCartForUser(User user, Session session, Date timestamp) {
+
+        user = session.find(User.class, user.getUserId());
+
+        List<Cart> carts = session.createQuery(
+                        "select c from Cart c left join fetch c.cartItems where c.user = :user", Cart.class)
+                .setParameter("user", user)
+                .getResultList();
+
+        if (carts.isEmpty()) {
+            Cart cart = new Cart();
+            cart.setUser(user);
+            cart.setCreatedAt(timestamp);
+            session.save(cart);
+            user.getCarts().add(cart);
+            return cart;
+        } else {
+
+            return carts.get(0);
+        }
     }
+
 }

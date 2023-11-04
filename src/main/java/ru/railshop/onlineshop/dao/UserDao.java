@@ -1,10 +1,9 @@
 package ru.railshop.onlineshop.dao;
 
-import lombok.extern.slf4j.Slf4j;
+import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.HibernateUtil;
@@ -12,9 +11,9 @@ import ru.railshop.onlineshop.util.HibernateUtil;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 public class UserDao {
 
+    private static final QUser qUser = QUser.user;
     private static final UserDao INSTANCE = new UserDao();
     private static SessionFactory sessionFactory;
 
@@ -35,67 +34,58 @@ public class UserDao {
     private UserDao() {
     }
 
-
-    public Optional<User> findByEmailAndPassword(String email, String password) throws Exception {
-        User user = null;
+    public Optional<User> findByEmailAndPassword(String email, String password) {
         try (Session session = sessionFactory.openSession()) {
-            String hql = "FROM User WHERE email = :email AND password = :password";
-            Query<User> query = session.createQuery(hql, User.class);
-            query.setParameter("email", email);
-            query.setParameter("password", password);
-            user = query.uniqueResult();
-            if (user != null) {
-            }
-        } catch (Exception e) {
-            throw new Exception("Error retrieving user by email and password", e);
-        }
-        return Optional.ofNullable(user);
-    }
+            JPAQuery<User> query = new JPAQuery<>(session);
+            User user = query.select(qUser)
+                    .from(qUser)
+                    .where(qUser.email.eq(email).and(qUser.password.eq(password)))
+                    .fetchOne();
 
-    public List<User> findAllUsers() throws Exception {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM User ", User.class).list();
+            return Optional.ofNullable(user);
         } catch (Exception e) {
-            throw new Exception("Error retrieving all products", e);
+            throw new DaoException("Error retrieving user by email and password", e);
         }
     }
 
+    public List<User> findAllUsers() {
+        try (Session session = sessionFactory.openSession()) {
+            JPAQuery<User> query = new JPAQuery<>(session);
+            return query.select(qUser)
+                    .from(qUser)
+                    .fetch();
+        } catch (Exception e) {
+            throw new DaoException("Error retrieving all users", e);
+        }
+    }
 
     public User save(User user) {
         Transaction transaction = null;
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             Long id = (Long) session.save(user);
             transaction.commit();
             user.setUserId(id);
-            log.info("User with name {} saved", user.getUsername());
             return user;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            log.error("Error saving user", e);
             throw new DaoException("Error saving user", e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
         }
     }
 
-    public Optional<User> findByEmail(String email) throws Exception { // for validation
-        User user = null;
+    public Optional<User> findByEmail(String email) { // for validation
         try (Session session = sessionFactory.openSession()) {
-            String hql = "FROM User WHERE email = :email";
-            Query<User> query = session.createQuery(hql, User.class);
-            query.setParameter("email", email);
-            user = query.uniqueResult();
-        } catch (Exception e) {
-            throw new Exception("Error retrieving user by email", e);
-        }
-        return Optional.ofNullable(user);
-    }
+            JPAQuery<User> query = new JPAQuery<>(session);
+            User user = query.select(qUser)
+                    .from(qUser)
+                    .where(qUser.email.eq(email))
+                    .fetchOne();
 
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            throw new DaoException("Error retrieving user by email", e);
+        }
+    }
 }

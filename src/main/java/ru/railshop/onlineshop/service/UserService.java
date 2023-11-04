@@ -1,5 +1,6 @@
 package ru.railshop.onlineshop.service;
 
+import org.hibernate.Session;
 import org.modelmapper.ModelMapper;
 import ru.railshop.onlineshop.dao.UserDao;
 import ru.railshop.onlineshop.dto.UserDto;

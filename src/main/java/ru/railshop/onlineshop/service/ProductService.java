@@ -40,7 +40,7 @@ public class ProductService {
         if (product != null) {
             return convertProductToProductDto(product);
         }
-        return null; // Handle the case where the product is not found
+        return null;
     }
 
     public List<ProductDto> getProductsByUserId(Long userId) throws Exception {

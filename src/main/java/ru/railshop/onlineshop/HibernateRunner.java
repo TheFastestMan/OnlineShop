@@ -1,10 +1,13 @@
 package ru.railshop.onlineshop;
 
+import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.util.HibernateUtil;
 import org.hibernate.query.Query;
+
+import javax.persistence.LockModeType;
 
 
 public class HibernateRunner {
@@ -12,22 +15,24 @@ public class HibernateRunner {
 
         try (SessionFactory sessionFactory = HibernateUtil.configureWithAnnotatedClasses(CartItem.class,
                 Product.class, Cart.class, User.class, UserProduct.class);
-             Session session = sessionFactory.openSession()) {
+             Session session = sessionFactory.openSession();
+             Session session1 = sessionFactory.openSession()) {
+
             TestDataImporter.importData(sessionFactory);
             session.beginTransaction();
+            session1.beginTransaction();
 
-            Query<Cart> query = session.createQuery(
-                    "SELECT c FROM Cart c LEFT JOIN FETCH c.cartItems WHERE c.cartId = :cartId",
-                    Cart.class
-            );
-            query.setParameter("cartId", 1L);
-            Cart cart = query.uniqueResult();
+            var cart = session.find(Cart.class, 1L, LockModeType.OPTIMISTIC);
+            cart.setUser(cart.getUser() );
 
-            cart.getCartItems().forEach(cartItem -> {
-                System.out.println(cartItem);
-            });
+            var cart2 = session.find(Cart.class, 1L, LockModeType.OPTIMISTIC);
+            cart2.setUser(cart2.getUser());
 
             session.getTransaction().commit();
+            session1.getTransaction().commit();
         }
+
+
     }
+
 }

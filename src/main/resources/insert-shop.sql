@@ -1,7 +1,14 @@
-INSERT INTO products (product_name, description, price) VALUES ('Goods 1','description 1',100.5);
-INSERT INTO products (product_name, description, price) VALUES ('Goods 2','description 2',200.5);
-INSERT INTO products (product_name, description, price) VALUES ('Goods 3','description 3',300.5);
-INSERT INTO products (product_name, description, price) VALUES ('Goods 4','description 4',400.5);
+-- INSERT INTO products (product_name, description, quantity, price)
+-- VALUES ('Goods 1', 'description 1', 100, 100.5);
+-- INSERT INTO products (product_name, description, quantity, price)
+-- VALUES ('Goods 2', 'description 2', 100, 200.5);
+-- INSERT INTO products (product_name, description, quantity, price)
+-- VALUES ('Goods 3', 'description 3', 100, 300.5);
+-- INSERT INTO products (product_name, description, quantity, price)
+-- VALUES ('Goods 4', 'description 4', 100, 400.5);
+
+INSERT INTO products (product_name, description, price)
+VALUES ('Goods 4', 'description 4', 400.5);
 
 INSERT INTO users (username, password, email, role, gender)
 VALUES ('admin1', 'password1', 'admin1@example.com', 'ADMIN', 'MALE'),

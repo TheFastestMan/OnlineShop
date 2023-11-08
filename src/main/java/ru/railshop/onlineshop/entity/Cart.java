@@ -1,12 +1,14 @@
 package ru.railshop.onlineshop.entity;
 
-
 import lombok.*;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+//@OptimisticLocking(type = OptimisticLockType.VERSION)
 @Data
 @Builder
 @ToString(exclude = "cartItems")
@@ -30,4 +32,7 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
+
+    @Version
+    private Long version;
 }

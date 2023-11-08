@@ -29,6 +29,9 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Double price;
 
+//    @Column(name = "quantity", nullable = false)
+//    private Integer quantity;
+
     @OneToMany(mappedBy = "product")
     private List<UserProduct> userProducts;
 

@@ -35,6 +35,11 @@ public class CartDao {
     }
 
     public void addProductToCart(User user, Product product, int quantity) throws Exception {
+        if (product.getQuantity() <= 0 || quantity <= 0) {
+            // If the product has no stock or the requested quantity is zero or less, throw an exception
+            throw new Exception("The product is out of stock or the requested quantity is not valid.");
+        }
+
         Transaction transaction = null;
         Date currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
         Session session = null;

@@ -22,19 +22,20 @@ public class AddToCartServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("Entering ProductsListServlet's doPost method");
+        log.info("Entering AddToCartServlet's doPost method");
 
         Long productId = Long.parseLong(req.getParameter("productId"));
+        int quantity = Integer.parseInt(req.getParameter("quantity")); // Get quantity from the request
 
         try {
             UserDto userDto = (UserDto) req.getSession().getAttribute("user");
             ProductDto productDto = productService.getProductById(productId);
 
-            if (userDto != null && productDto != null) {
-                int quantity = 1;
+            if (userDto != null && productDto != null && productDto.getQuantity() >= quantity) { // Check if there's enough quantity
+                productService.reduceQuantityByOne(productId, quantity);
                 cartService.addProductToCart(userDto, productDto, quantity);
 
-                log.debug("Product ID received: " + productId);
+                log.debug("Product ID received: " + productId + " with quantity: " + quantity);
 
                 req.setAttribute("addToCartSuccess", true);
             } else {

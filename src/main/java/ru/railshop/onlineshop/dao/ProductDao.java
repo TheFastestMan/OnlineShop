@@ -1,8 +1,10 @@
 package ru.railshop.onlineshop.dao;
 
+import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.util.HibernateUtil;
 
@@ -12,6 +14,8 @@ public class ProductDao {
     private static final ProductDao INSTANCE = new ProductDao();
     private static final QProduct qProduct = QProduct.product;
     private static final QUserProduct qUserProduct = QUserProduct.userProduct;
+    private static final QProduct product = QProduct.product;
+
 
     private static SessionFactory sessionFactory;
 
@@ -64,6 +68,33 @@ public class ProductDao {
                     .fetch();
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving products for user ID: " + userId, e);
+        }
+    }
+
+    public void decreaseQuantityByAmount(Long productId, int quantityToDecrease) {
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+
+            HibernateQueryFactory queryFactory = new HibernateQueryFactory(session);
+
+            long affectedRows = queryFactory.update(product)
+                    .where(product.productId.eq(productId)
+                            .and(product.quantity.goe(quantityToDecrease)))
+                    .set(product.quantity, product.quantity.subtract(quantityToDecrease))
+                    .execute();
+
+            if (affectedRows == 0) {
+
+                throw new RuntimeException("No product was updated, check the product ID and its quantity");
+            }
+
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
         }
     }
 

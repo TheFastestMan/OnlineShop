@@ -32,6 +32,7 @@ public class ProductService {
                 new ProductDto(product.getProductId(),
                         product.getProductName(),
                         product.getDescription(),
+                        product.getQuantity(),
                         product.getPrice())).collect(Collectors.toList());
     }
 
@@ -47,7 +48,11 @@ public class ProductService {
         List<Product> products = productDao.getProductsByUserId(userId);
         return products.stream()
                 .map(product -> new ProductDto(product.getProductId(), product.getProductName()
-                , product.getDescription(), product.getPrice()))
+                , product.getDescription(), product.getQuantity(), product.getPrice()))
                 .collect(Collectors.toList());
+    }
+
+    public void reduceQuantityByOne(Long productId, int quantityToDecrease){
+        productDao.decreaseQuantityByAmount( productId, quantityToDecrease);
     }
 }

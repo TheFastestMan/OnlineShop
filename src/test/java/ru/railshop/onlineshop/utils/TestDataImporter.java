@@ -25,10 +25,10 @@ public class TestDataImporter {
                     "user2_test@gmail.com", Role.USER, Gender.MALE);
 
 
-            Product testProduct = saveProduct(session, "testProduct", 100.5,
-                    "testDescription");
+            Product testProduct = saveProduct(session, "testProduct", 100.5, "testDescription", 100
+            );
 
-            UserProduct testUserProduct = saveUserProduct(session, testUser2,testProduct);
+            UserProduct testUserProduct = saveUserProduct(session, testUser2, testProduct);
 
             Cart testCart = saveCart(session, testUser, currentTimestamp);
 
@@ -61,9 +61,10 @@ public class TestDataImporter {
         return user;
     }
 
-    private Product saveProduct(Session session, String productName, Double price, String description) {
+    private Product saveProduct(Session session, String productName, Double price, String description, Integer quantity) {
         Product product = Product.builder()
                 .productName(productName)
+                .quantity(quantity)
                 .price(price)
                 .description(description)
                 .build();

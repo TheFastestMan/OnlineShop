@@ -9,6 +9,7 @@ import ru.railshop.onlineshop.entity.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
+
 @UtilityClass
 public class TestDataImporter {
     public void importData(SessionFactory sessionFactory) {
@@ -18,18 +19,22 @@ public class TestDataImporter {
 
             Date currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
 
-            User testUser = saveUser(session, "TestUser1", "password1",
-                    "user1_test@gmail.com", Role.USER, Gender.FEMALE);
-            User testUser2 = saveUser(session, "TestUser2", "password2",
-                    "user2_test@gmail.com", Role.USER, Gender.MALE);
+            User testUser = saveUser(session, "TestUser10", "password1",
+                    "user10_test@gmail.com", Role.USER, Gender.FEMALE);
+//            User testUser2 = saveUser(session, "TestUser20", "password2",
+//                    "user20_test@gmail.com", Role.USER, Gender.MALE);
 
 
-            Product testProduct = saveProduct(session, "testProduct", 100.5,
-                    "testDescription");
+            Product testProduct = saveProduct(session, "testProduct", 100.5, "testDescription", 100);
+            Product testProduct2 = saveProduct(session, "testProduct2", 100.5, "testDescription2", 100);
+            Product testProduct3 = saveProduct(session, "testProduct3", 100.5, "testDescription3", 100);
+            Product testProduct4 = saveProduct(session, "testProduct4", 100.5, "testDescription4", 100);
 
-            UserProduct testUserProduct = saveUserProduct(session, testUser2,testProduct);
+            UserProduct testUserProduct = saveUserProduct(session, testUser, testProduct);
+//            UserProduct testUserProduct2 = saveUserProduct(session, testUser2, testProduct);
 
             Cart testCart = saveCart(session, testUser, currentTimestamp);
+//            Cart testCart2 = saveCart(session, testUser2, currentTimestamp);
 
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -60,9 +65,10 @@ public class TestDataImporter {
         return user;
     }
 
-    private Product saveProduct(Session session, String productName, Double price, String description) {
+    private Product saveProduct(Session session, String productName, Double price, String description, Integer quantity) {
         Product product = Product.builder()
                 .productName(productName)
+                .quantity(quantity)
                 .price(price)
                 .description(description)
                 .build();

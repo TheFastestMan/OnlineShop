@@ -20,7 +20,8 @@ CREATE TABLE products
     product_name VARCHAR(100)   NOT NULL,
     description  TEXT,
     price        DECIMAL(10, 2) NOT NULL,
-    quantity     INT            NOT NULL
+    quantity     INT            NOT NULL,
+    version      BIGINT
 
     -- Other product-related fields
 );
@@ -49,3 +50,5 @@ drop table carts_items CASCADE;
 drop table products CASCADE;
 drop table users_products CASCADE;
 drop table carts CASCADE;
+drop table products_aud CASCADE ;
+drop table revinfo CASCADE ;

@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.List;
 @Data
 @Builder
 @Entity
+@Audited
+@OptimisticLocking(type = OptimisticLockType.VERSION)
 @Table(name = "products")
 public class Product {
     @Id
@@ -33,8 +39,13 @@ public class Product {
     private Integer quantity;
 
     @OneToMany(mappedBy = "product")
+    @NotAudited
     private List<UserProduct> userProducts;
 
     @OneToMany(mappedBy = "product")
+    @NotAudited
     private List<CartItem> cartItems;
+
+    @Version
+    private Long version;
 }

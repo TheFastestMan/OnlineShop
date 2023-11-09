@@ -1,14 +1,17 @@
 package ru.railshop.onlineshop.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 @Data
 @ToString(exclude = "carts")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "Users")
 @Entity
 @Table(name = "users")
 public class User {

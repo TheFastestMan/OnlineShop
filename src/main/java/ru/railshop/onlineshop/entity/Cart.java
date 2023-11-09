@@ -33,6 +33,6 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
-    @Version
-    private Long version;
+//    @Version
+//    private Long version;
 }

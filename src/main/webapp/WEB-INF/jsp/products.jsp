@@ -14,17 +14,20 @@
 <body>
 <h1> List of products: </h1>
 
-
-<form action="${pageContext.request.contextPath}/addToCart" method="post">
-    <c:forEach items="${pr}" var="product">
+<c:forEach items="${pr}" var="product">
+    <form action="${pageContext.request.contextPath}/addToCart" method="post">
         <li>ID: ${product.productId}</li>
         <li>Name: ${product.productName}</li>
         <li>Description: ${product.description}</li>
         <li>Price: ${product.price}</li>
         <input type="hidden" name="productId" value="${product.productId}"/>
         <input type="submit" value="Add to Cart"/>
-    </c:forEach>
-</form>
+    </form>
+</c:forEach>
+
+<c:url value="user" var="userProfileUrl" />
+<a href="${userProfileUrl}">Back to User Profile</a>
+
 
 </body>
 </html>

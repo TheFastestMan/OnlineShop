@@ -18,6 +18,8 @@ import java.io.IOException;
 public class AddToCartServlet extends HttpServlet {
     private final ProductService productService = ProductService.getInstance();
     private final CartService cartService = CartService.getInstance();
+
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Entering ProductsListServlet's doPost method");
@@ -31,6 +33,8 @@ public class AddToCartServlet extends HttpServlet {
             if (userDto != null && productDto != null) {
                 int quantity = 1;
                 cartService.addProductToCart(userDto, productDto, quantity);
+
+                log.debug("Product ID received: " + productId);
 
                 req.setAttribute("addToCartSuccess", true);
             } else {

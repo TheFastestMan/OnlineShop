@@ -98,5 +98,16 @@ public class ProductDao {
         }
     }
 
+    public void saveProduct(Product product){
+        Transaction transaction = null;
+        try(Session session = sessionFactory.openSession()){
+            transaction = session.beginTransaction();
+
+            session.save(product);
+
+            transaction.commit();
+        }
+
+    }
 
 }

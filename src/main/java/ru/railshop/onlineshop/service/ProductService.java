@@ -26,6 +26,16 @@ public class ProductService {
         productDto.setPrice(product.getPrice());
         return productDto;
     }
+
+    public Product convertProductDtoToProduct(ProductDto productDto) {
+        Product product = modelMapper.map(productDto, Product.class);
+        product.setProductId(productDto.getProductId());
+        product.setProductName(productDto.getProductName());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        return product;
+    }
+
     public List<ProductDto> getAllProducts() throws Exception {
 
         return productDao.findAllProducts().stream().map(product ->
@@ -54,5 +64,10 @@ public class ProductService {
 
     public void reduceQuantityByOne(Long productId, int quantityToDecrease){
         productDao.decreaseQuantityByAmount( productId, quantityToDecrease);
+    }
+
+    public void addProduct(ProductDto productDto) {
+        Product product = convertProductDtoToProduct(productDto);
+        productDao.saveProduct(product);
     }
 }

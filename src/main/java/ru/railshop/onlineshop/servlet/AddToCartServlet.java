@@ -25,13 +25,13 @@ public class AddToCartServlet extends HttpServlet {
         log.info("Entering AddToCartServlet's doPost method");
 
         Long productId = Long.parseLong(req.getParameter("productId"));
-        int quantity = Integer.parseInt(req.getParameter("quantity")); // Get quantity from the request
+        int quantity = Integer.parseInt(req.getParameter("quantity"));
 
         try {
             UserDto userDto = (UserDto) req.getSession().getAttribute("user");
             ProductDto productDto = productService.getProductById(productId);
 
-            if (userDto != null && productDto != null && productDto.getQuantity() >= quantity) { // Check if there's enough quantity
+            if (userDto != null && productDto != null && productDto.getQuantity() >= quantity) {
                 productService.reduceQuantityByOne(productId, quantity);
                 cartService.addProductToCart(userDto, productDto, quantity);
 

@@ -23,8 +23,7 @@ public class ProductsListServlet extends HttpServlet {
     @SneakyThrows
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html");
-        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
 
         log.info("Entering ProductsListServlet's doGet method");
 

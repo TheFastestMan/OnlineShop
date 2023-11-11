@@ -22,10 +22,14 @@
     <li>Role: ${user.role}</li>
     <!-- Display admin link if role is ADMIN -->
     <c:if test="${user.role eq 'ADMIN'}">
-        <li><a href="/admin">Go to Admin Page</a></li>
+        <li><a href="/admin">Go to admin page</a></li>
     </c:if>
+<c:if test="${user.role eq 'ADMIN'}">
+    <li><a href="/admin/addProducts">Go to products adding page</a></li>
 
-    <li><a href="products">Choose Available Products</a></li>
+</c:if>
+
+<li><a href="products">Choose Available Products</a></li>
 
 
     <c:if test="${not empty user}">

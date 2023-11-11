@@ -36,7 +36,6 @@ public class CartDao {
 
     public void addProductToCart(User user, Product product, int quantity) throws Exception {
         if (product.getQuantity() <= 0 || quantity <= 0) {
-            // If the product has no stock or the requested quantity is zero or less, throw an exception
             throw new Exception("The product is out of stock or the requested quantity is not valid.");
         }
 
@@ -48,24 +47,34 @@ public class CartDao {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            if (user.getCarts() == null) {
-                user.setCarts(new ArrayList<>());
+            // Ensure the product is managed by Hibernate
+            if (product.getProductId() != null) {
+                product = session.get(Product.class, product.getProductId());
+            } else {
+                session.save(product);
             }
 
+            // Find or create a cart for the user
             Cart cart = findOrCreateCartForUser(user, session, currentTimestamp);
+
+            // Create a new CartItem with the managed product
             CartItem cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
 
+            // Save the CartItem
             session.save(cartItem);
 
             UserProduct userProduct = new UserProduct();
             userProduct.setUser(user);
             userProduct.setProduct(product);
-
             session.save(userProduct);
 
+            // Additional logic for UserProduct if needed
+            // ...
+
+            // Commit the transaction
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -78,6 +87,7 @@ public class CartDao {
             }
         }
     }
+
 //    private Cart findOrCreateCartForUser(User user, Session session, Date timestamp) {
 //        Cart cart = new Cart();
 //        cart.setUser(user);

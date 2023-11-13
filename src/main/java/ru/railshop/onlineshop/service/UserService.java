@@ -38,7 +38,7 @@ public class UserService {
     public Optional<UserDto> login(String email, String password) throws Exception {
         return userDao.findByEmailAndPassword(email, password)
                 .map(user -> UserDto.builder()
-                        .userId(user.getUserId())
+                        .id(user.getId())
                         .username(user.getUsername())
                         .email(user.getEmail())
                         .role(user.getRole())
@@ -48,7 +48,7 @@ public class UserService {
     public List<UserDto> findAllUser() throws Exception {
         return userDao.findAllUsers().stream()
                 .map(user -> UserDto.builder()
-                        .userId(user.getUserId())
+                        .id(user.getId())
                         .username(user.getUsername())
                         .email(user.getEmail())
                         .role(user.getRole())

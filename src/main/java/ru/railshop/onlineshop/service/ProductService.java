@@ -12,12 +12,14 @@ public class ProductService {
     private final static ProductService INSTANCE = new ProductService();
     private ModelMapper modelMapper = new ModelMapper();
     private ProductDao productDao = ProductDao.getInstance();
-    public static ProductService getInstance(){
+
+    public static ProductService getInstance() {
         return INSTANCE;
     }
 
     private ProductService() {
     }
+
     public ProductDto convertProductToProductDto(Product product) {
         ProductDto productDto = modelMapper.map(product, ProductDto.class);
         productDto.setProductId(product.getProductId());
@@ -35,7 +37,6 @@ public class ProductService {
         product.setPrice(productDto.getPrice());
         return product;
     }
-
     public List<ProductDto> getAllProducts() throws Exception {
 
         return productDao.findAllProducts().stream().map(product ->
@@ -58,12 +59,12 @@ public class ProductService {
         List<Product> products = productDao.getProductsByUserId(userId);
         return products.stream()
                 .map(product -> new ProductDto(product.getProductId(), product.getProductName()
-                , product.getDescription(), product.getQuantity(), product.getPrice()))
+                        , product.getDescription(), product.getQuantity(), product.getPrice()))
                 .collect(Collectors.toList());
     }
 
-    public void reduceQuantityByOne(Long productId, int quantityToDecrease){
-        productDao.decreaseQuantityByAmount( productId, quantityToDecrease);
+    public void reduceQuantityByOne(Long productId, int quantityToDecrease) {
+        productDao.decreaseQuantityByAmount(productId, quantityToDecrease);
     }
 
     public void addProduct(ProductDto productDto) {

@@ -11,11 +11,13 @@ import ru.railshop.onlineshop.util.HibernateUtil;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDao {
+public class UserDao extends BaseRepository<Long, User> {
 
     private static final QUser qUser = QUser.user;
     private static final UserDao INSTANCE = new UserDao();
-    private static SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+
 
     public static void initializeSessionFactory() {
         sessionFactory = HibernateUtil
@@ -31,7 +33,7 @@ public class UserDao {
         return INSTANCE;
     }
 
-    private UserDao() {
+        private UserDao(){
     }
 
     public Optional<User> findByEmailAndPassword(String email, String password) {
@@ -48,32 +50,6 @@ public class UserDao {
         }
     }
 
-    public List<User> findAllUsers() {
-        try (Session session = sessionFactory.openSession()) {
-            JPAQuery<User> query = new JPAQuery<>(session);
-            return query.select(qUser)
-                    .from(qUser)
-                    .fetch();
-        } catch (Exception e) {
-            throw new DaoException("Error retrieving all users", e);
-        }
-    }
-
-    public User save(User user) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            Long id = (Long) session.save(user);
-            transaction.commit();
-            user.setUserId(id);
-            return user;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new DaoException("Error saving user", e);
-        }
-    }
 
     public Optional<User> findByEmail(String email) { // for validation
         try (Session session = sessionFactory.openSession()) {

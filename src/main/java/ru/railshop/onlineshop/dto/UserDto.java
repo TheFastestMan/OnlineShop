@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserDto {
-    private Long userId;
+    private Long id;
     private String username;
     private String email;
     private Role role;

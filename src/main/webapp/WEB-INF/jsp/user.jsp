@@ -16,7 +16,7 @@
 <h1>User:</h1>
 <ul>
 
-    <li>ID: ${user.userId}</li>
+    <li>ID: ${user.id}</li>
     <li>Username: ${user.username}</li>
     <li>Email: ${user.email}</li>
     <li>Role: ${user.role}</li>
@@ -31,11 +31,9 @@
 
 <li><a href="products">Choose Available Products</a></li>
 
-
     <c:if test="${not empty user}">
-        <li><a href="userItems?userId=${user.userId}">View User Items</a></li>
+        <li><a href="userItems?userId=${user.id}">View User Items</a></li>
     </c:if>
-
 
 </ul>
 </body>

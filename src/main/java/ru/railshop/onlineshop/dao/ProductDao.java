@@ -64,7 +64,7 @@ public class ProductDao {
             JPAQuery<Product> query = new JPAQuery<>(session);
             return query.select(qUserProduct.product)
                     .from(qUserProduct)
-                    .where(qUserProduct.user.userId.eq(userId))
+                    .where(qUserProduct.user.id.eq(userId))
                     .fetch();
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving products for user ID: " + userId, e);

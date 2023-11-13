@@ -30,7 +30,7 @@
     <tbody>
     <c:forEach items="${users}" var="user">
         <tr>
-            <td>${user.userId}</td>
+            <td>${user.id}</td>
             <td>${user.username}</td>
             <td>${user.email}</td>
             <td>

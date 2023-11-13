@@ -47,23 +47,19 @@ public class CartDao {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            // Ensure the product is managed by Hibernate
             if (product.getProductId() != null) {
                 product = session.get(Product.class, product.getProductId());
             } else {
                 session.save(product);
             }
 
-            // Find or create a cart for the user
             Cart cart = findOrCreateCartForUser(user, session, currentTimestamp);
 
-            // Create a new CartItem with the managed product
             CartItem cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
 
-            // Save the CartItem
             session.save(cartItem);
 
             UserProduct userProduct = new UserProduct();
@@ -71,10 +67,6 @@ public class CartDao {
             userProduct.setProduct(product);
             session.save(userProduct);
 
-            // Additional logic for UserProduct if needed
-            // ...
-
-            // Commit the transaction
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -99,7 +91,7 @@ public class CartDao {
 
     public Cart findOrCreateCartForUser(User user, Session session, Date timestamp) {
 
-        user = session.find(User.class, user.getUserId());
+        user = session.find(User.class, user.getId());
 
         List<Cart> carts = session.createQuery(
                         "select c from Cart c left join fetch c.cartItems where c.user = :user", Cart.class)

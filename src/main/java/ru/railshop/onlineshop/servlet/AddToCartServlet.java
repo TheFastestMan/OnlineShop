@@ -12,6 +12,7 @@ import ru.railshop.onlineshop.service.CartService;
 import ru.railshop.onlineshop.service.ProductService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @WebServlet("/addToCart")
@@ -29,9 +30,11 @@ public class AddToCartServlet extends HttpServlet {
 
         try {
             UserDto userDto = (UserDto) req.getSession().getAttribute("user");
-            ProductDto productDto = productService.getProductById(productId);
+            Optional<ProductDto> productDtoOptional = productService.getProductById(productId);
 
-            if (userDto != null && productDto != null && productDto.getQuantity() >= quantity) {
+            if (userDto != null && productDtoOptional.isPresent() && productDtoOptional.get().getQuantity() >= quantity) {
+                ProductDto productDto = productDtoOptional.get(); // Extract the ProductDto from Optional
+
                 productService.reduceQuantityByOne(productId, quantity);
                 cartService.addProductToCart(userDto, productDto, quantity);
 

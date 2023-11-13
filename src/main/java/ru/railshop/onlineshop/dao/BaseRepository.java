@@ -2,7 +2,9 @@ package ru.railshop.onlineshop.dao;
 
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import ru.railshop.onlineshop.entity.BaseEntity;
 
 import java.io.Serializable;
@@ -18,9 +20,20 @@ public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
 
     @Override
     public E save(E entity) {
-        @Cleanup var session = sessionFactory.openSession();
-        session.save(entity);
-        return entity;
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+
+            session.save(entity);
+
+            transaction.commit();
+            return entity;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Error during save operation", e);
+        }
     }
 
     @Override
@@ -48,7 +61,6 @@ public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
     public void update(E entity) {
         @Cleanup var session = sessionFactory.openSession();
         session.merge(entity);
-
 
     }
 }

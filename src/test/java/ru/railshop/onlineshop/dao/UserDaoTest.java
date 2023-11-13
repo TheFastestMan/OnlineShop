@@ -49,7 +49,7 @@ class UserDaoTest {
         @Cleanup Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        List<User> results = userDao.findAllUsers();
+        List<User> results = userDao.findAll();
         assertThat(results).hasSize(2);
 
         List<String> userNames = results.stream()
@@ -125,7 +125,7 @@ class UserDaoTest {
         @Cleanup Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        List<Product> products = productDao.findAllProducts();
+        List<Product> products = productDao.findAll();
 
         assertThat(products).hasSize(1);
 
@@ -144,10 +144,10 @@ class UserDaoTest {
 
         Long productId = 1L;
 
-        Product foundProduct = ProductDao.getInstance().getProductById(productId);
+        Optional<Product> foundProduct = ProductDao.getInstance().findById(productId);
 
         Assertions.assertNotNull(foundProduct, "The product should be found");
-        Assertions.assertEquals(productId, foundProduct.getProductId(), "The product IDs should match");
+        Assertions.assertEquals(productId, foundProduct.get().getId(), "The product IDs should match");
     }
 
     @Test

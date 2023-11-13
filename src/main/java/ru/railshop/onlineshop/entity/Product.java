@@ -20,11 +20,11 @@ import java.util.List;
 @Audited
 @OptimisticLocking(type = OptimisticLockType.VERSION)
 @Table(name = "products")
-public class Product {
+public class Product implements BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private Long productId;
+    private Long id;
 
     @Column(name = "product_name", nullable = false)
     private String productName;

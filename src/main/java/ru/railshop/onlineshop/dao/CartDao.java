@@ -12,27 +12,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CartDao {
-    private static final CartDao INSTANCE = new CartDao();
+public class CartDao extends BaseRepository<Long, Cart> {
+    private static SessionFactory sessionFactory = initializeSessionFactory();
 
-    private static SessionFactory sessionFactory;
+    private static final CartDao INSTANCE = new CartDao(sessionFactory);
 
-    public static void initializeSessionFactory() {
-        sessionFactory = HibernateUtil
+    public CartDao(SessionFactory sessionFactory) {
+        super(sessionFactory, Cart.class);
+    }
+
+
+    public static SessionFactory initializeSessionFactory() {
+        return HibernateUtil
                 .configureWithAnnotatedClasses(CartItem.class, Product.class, Cart.class,
                         User.class, UserProduct.class);
     }
 
-    static {
-        initializeSessionFactory();
-    }
 
     public static CartDao getInstance() {
         return INSTANCE;
     }
 
-    private CartDao() {
-    }
 
     public void addProductToCart(User user, Product product, int quantity) throws Exception {
         if (product.getQuantity() <= 0 || quantity <= 0) {
@@ -47,8 +47,8 @@ public class CartDao {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            if (product.getProductId() != null) {
-                product = session.get(Product.class, product.getProductId());
+            if (product.getId() != null) {
+                product = session.get(Product.class, product.getId());
             } else {
                 session.save(product);
             }

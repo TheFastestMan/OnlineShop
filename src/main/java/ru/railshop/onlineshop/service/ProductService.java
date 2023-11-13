@@ -1,11 +1,13 @@
 package ru.railshop.onlineshop.service;
 
+import org.hibernate.Session;
 import org.modelmapper.ModelMapper;
 import ru.railshop.onlineshop.dao.ProductDao;
 import ru.railshop.onlineshop.dto.ProductDto;
 import ru.railshop.onlineshop.entity.Product;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ProductService {
@@ -22,7 +24,7 @@ public class ProductService {
 
     public ProductDto convertProductToProductDto(Product product) {
         ProductDto productDto = modelMapper.map(product, ProductDto.class);
-        productDto.setProductId(product.getProductId());
+        productDto.setId(product.getId());
         productDto.setProductName(product.getProductName());
         productDto.setDescription(product.getDescription());
         productDto.setPrice(product.getPrice());
@@ -31,7 +33,7 @@ public class ProductService {
 
     public Product convertProductDtoToProduct(ProductDto productDto) {
         Product product = modelMapper.map(productDto, Product.class);
-        product.setProductId(productDto.getProductId());
+        product.setId(productDto.getId());
         product.setProductName(productDto.getProductName());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
@@ -39,26 +41,24 @@ public class ProductService {
     }
     public List<ProductDto> getAllProducts() throws Exception {
 
-        return productDao.findAllProducts().stream().map(product ->
-                new ProductDto(product.getProductId(),
+        return productDao.findAll().stream().map(product ->
+                new ProductDto(product.getId(),
                         product.getProductName(),
                         product.getDescription(),
                         product.getQuantity(),
                         product.getPrice())).collect(Collectors.toList());
     }
 
-    public ProductDto getProductById(Long productId) {
-        Product product = productDao.getProductById(productId);
-        if (product != null) {
-            return convertProductToProductDto(product);
-        }
-        return null;
+    public Optional<ProductDto> getProductById(Long productId) {
+        Optional<Product> productOptional = productDao.findById(productId);
+        return productOptional.map(this::convertProductToProductDto);
     }
+
 
     public List<ProductDto> getProductsByUserId(Long userId) throws Exception {
         List<Product> products = productDao.getProductsByUserId(userId);
         return products.stream()
-                .map(product -> new ProductDto(product.getProductId(), product.getProductName()
+                .map(product -> new ProductDto(product.getId(), product.getProductName()
                         , product.getDescription(), product.getQuantity(), product.getPrice()))
                 .collect(Collectors.toList());
     }
@@ -69,6 +69,6 @@ public class ProductService {
 
     public void addProduct(ProductDto productDto) {
         Product product = convertProductDtoToProduct(productDto);
-        productDao.saveProduct(product);
+        productDao.save(product);
     }
 }

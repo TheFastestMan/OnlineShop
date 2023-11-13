@@ -11,28 +11,28 @@ import ru.railshop.onlineshop.util.HibernateUtil;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDao {
+public class UserDao extends BaseRepository<Long, User> {
 
     private static final QUser qUser = QUser.user;
-    private static final UserDao INSTANCE = new UserDao();
-    private static SessionFactory sessionFactory;
 
-    public static void initializeSessionFactory() {
-        sessionFactory = HibernateUtil
+    private static final SessionFactory sessionFactory = initializeSessionFactory();
+    private static final UserDao INSTANCE = new UserDao(sessionFactory);
+
+    public UserDao(SessionFactory sessionFactory) {
+        super(sessionFactory, User.class);
+    }
+
+    public static SessionFactory initializeSessionFactory() {
+        return HibernateUtil
                 .configureWithAnnotatedClasses(User.class, Cart.class, CartItem.class,
                         Product.class, UserProduct.class);
     }
 
-    static {
-        initializeSessionFactory();
-    }
 
     public static UserDao getInstance() {
         return INSTANCE;
     }
 
-    private UserDao() {
-    }
 
     public Optional<User> findByEmailAndPassword(String email, String password) {
         try (Session session = sessionFactory.openSession()) {
@@ -45,33 +45,6 @@ public class UserDao {
             return Optional.ofNullable(user);
         } catch (Exception e) {
             throw new DaoException("Error retrieving user by email and password", e);
-        }
-    }
-
-    public List<User> findAllUsers() {
-        try (Session session = sessionFactory.openSession()) {
-            JPAQuery<User> query = new JPAQuery<>(session);
-            return query.select(qUser)
-                    .from(qUser)
-                    .fetch();
-        } catch (Exception e) {
-            throw new DaoException("Error retrieving all users", e);
-        }
-    }
-
-    public User save(User user) {
-        Transaction transaction = null;
-        try (Session session = sessionFactory.openSession()) {
-            transaction = session.beginTransaction();
-            Long id = (Long) session.save(user);
-            transaction.commit();
-            user.setId(id);
-            return user;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new DaoException("Error saving user", e);
         }
     }
 

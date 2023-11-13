@@ -16,15 +16,15 @@
 
 <c:forEach items="${pr}" var="product">
     <form action="${pageContext.request.contextPath}/addToCart" method="post">
-        <li>ID: ${product.productId}</li>
+        <li>ID: ${product.id}</li>
         <li>Name: ${product.productName}</li>
         <li>Description: ${product.description}</li>
         <li>Quantity: ${product.quantity}</li>
         <li>Price: ${product.price}</li>
-        <input type="hidden" name="productId" value="${product.productId}"/>
+        <input type="hidden" name="productId" value="${product.id}"/>
         <!-- Add a number input field for quantity -->
-        <label for="quantity${product.productId}">Quantity:</label>
-        <input type="number" id="quantity${product.productId}" name="quantity" min="1" value="1"/>
+        <label for="quantity${product.id}">Quantity:</label>
+        <input type="number" id="quantity${product.id}" name="quantity" min="1" value="1"/>
         <input type="submit" value="Add to Cart"/>
     </form>
 </c:forEach>

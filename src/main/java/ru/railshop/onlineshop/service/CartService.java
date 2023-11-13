@@ -23,7 +23,7 @@ public class CartService {
 
     public Product convertProductDtoToProduct(ProductDto productDto) {
         Product product = modelMapper.map(productDto, Product.class);
-        product.setProductId(productDto.getProductId());
+        product.setId(productDto.getId());
         product.setProductName(productDto.getProductName());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());

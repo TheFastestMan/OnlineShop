@@ -10,54 +10,27 @@ import ru.railshop.onlineshop.util.HibernateUtil;
 
 import java.util.List;
 
-public class ProductDao {
-    private static final ProductDao INSTANCE = new ProductDao();
+public class ProductDao extends BaseRepository<Long, Product> {
     private static final QProduct qProduct = QProduct.product;
     private static final QUserProduct qUserProduct = QUserProduct.userProduct;
     private static final QProduct product = QProduct.product;
+    private static SessionFactory sessionFactory = initializeSessionFactory();
+    private static final ProductDao INSTANCE = new ProductDao(sessionFactory);
 
-
-    private static SessionFactory sessionFactory;
-
-    public static void initializeSessionFactory() {
-        sessionFactory = HibernateUtil
-                .configureWithAnnotatedClasses(CartItem.class, Product.class,
-                        Cart.class, User.class, UserProduct.class);
+    public ProductDao(SessionFactory sessionFactory) {
+        super(sessionFactory, Product.class);
     }
 
-    static {
-        initializeSessionFactory();
+    public static SessionFactory initializeSessionFactory() {
+        return HibernateUtil
+                .configureWithAnnotatedClasses(CartItem.class, Product.class,
+                        Cart.class, User.class, UserProduct.class);
     }
 
     public static ProductDao getInstance() {
         return INSTANCE;
     }
 
-    private ProductDao() {
-    }
-
-    public List<Product> findAllProducts() {
-        try (Session session = sessionFactory.openSession()) {
-            JPAQuery<Product> query = new JPAQuery<>(session);
-            return query.select(qProduct)
-                    .from(qProduct)
-                    .fetch();
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving all products", e);
-        }
-    }
-
-    public Product getProductById(Long productId) {
-        try (Session session = sessionFactory.openSession()) {
-            JPAQuery<Product> query = new JPAQuery<>(session);
-            return query.select(qProduct)
-                    .from(qProduct)
-                    .where(qProduct.productId.eq(productId))
-                    .fetchOne();
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving product by ID: " + productId, e);
-        }
-    }
 
     public List<Product> getProductsByUserId(Long userId) {
         try (Session session = sessionFactory.openSession()) {
@@ -76,17 +49,11 @@ public class ProductDao {
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
 
-            HibernateQueryFactory queryFactory = new HibernateQueryFactory(session);
-
-            long affectedRows = queryFactory.update(product)
-                    .where(product.productId.eq(productId)
-                            .and(product.quantity.goe(quantityToDecrease)))
-                    .set(product.quantity, product.quantity.subtract(quantityToDecrease))
-                    .execute();
-
-            if (affectedRows == 0) {
-
-                throw new RuntimeException("No product was updated, check the product ID and its quantity");
+            Product product = session.get(Product.class, productId);
+            if (product != null) {
+                int newQuantity = product.getQuantity() - quantityToDecrease;
+                product.setQuantity(newQuantity);
+                session.saveOrUpdate(product);
             }
 
             transaction.commit();
@@ -94,20 +61,8 @@ public class ProductDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw e;
+            throw new RuntimeException("Error during quantity decrease", e);
         }
-    }
-
-    public void saveProduct(Product product){
-        Transaction transaction = null;
-        try(Session session = sessionFactory.openSession()){
-            transaction = session.beginTransaction();
-
-            session.save(product);
-
-            transaction.commit();
-        }
-
     }
 
 }

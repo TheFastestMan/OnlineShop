@@ -46,7 +46,7 @@ public class UserService {
                         .build());
     }
     public List<UserDto> findAllUser() throws Exception {
-        return userDao.findAllUsers().stream()
+        return userDao.findAll().stream()
                 .map(user -> UserDto.builder()
                         .id(user.getId())
                         .username(user.getUsername())

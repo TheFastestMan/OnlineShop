@@ -1,6 +1,5 @@
-package ru.railshop.onlineshop.dao;
+package ru.railshop.onlineshop.repository;
 
-import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,14 +9,14 @@ import ru.railshop.onlineshop.util.HibernateUtil;
 
 import java.util.List;
 
-public class ProductDao extends BaseRepository<Long, Product> {
+public class ProductRepository extends BaseRepository<Long, Product> {
     private static final QProduct qProduct = QProduct.product;
     private static final QUserProduct qUserProduct = QUserProduct.userProduct;
     private static final QProduct product = QProduct.product;
     private static SessionFactory sessionFactory = initializeSessionFactory();
-    private static final ProductDao INSTANCE = new ProductDao(sessionFactory);
+    private static final ProductRepository INSTANCE = new ProductRepository(sessionFactory);
 
-    public ProductDao(SessionFactory sessionFactory) {
+    public ProductRepository(SessionFactory sessionFactory) {
         super(sessionFactory, Product.class);
     }
 
@@ -27,7 +26,7 @@ public class ProductDao extends BaseRepository<Long, Product> {
                         Cart.class, User.class, UserProduct.class);
     }
 
-    public static ProductDao getInstance() {
+    public static ProductRepository getInstance() {
         return INSTANCE;
     }
 

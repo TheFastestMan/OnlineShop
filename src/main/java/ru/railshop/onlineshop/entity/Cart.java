@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-//@OptimisticLocking(type = OptimisticLockType.VERSION)
+@OptimisticLocking(type = OptimisticLockType.VERSION)
 @Data
 @Builder
 @NoArgsConstructor

@@ -7,6 +7,7 @@ import ru.railshop.onlineshop.entity.CartItem;
 import ru.railshop.onlineshop.entity.User;
 
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -16,10 +17,7 @@ import java.util.List;
 @Data
 public class CartDto {
     private Long cartId;
-
     private User user;
-
     private Date createdAt;
-
     private List<CartItem> cartItems;
 }

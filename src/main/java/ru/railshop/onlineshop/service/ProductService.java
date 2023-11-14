@@ -1,11 +1,14 @@
 package ru.railshop.onlineshop.service;
 
-import org.hibernate.Session;
+
 import org.modelmapper.ModelMapper;
-import ru.railshop.onlineshop.dao.ProductDao;
+
 import ru.railshop.onlineshop.dto.ProductDto;
 import ru.railshop.onlineshop.entity.Product;
+import ru.railshop.onlineshop.repository.ProductRepository;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,7 +16,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final static ProductService INSTANCE = new ProductService();
     private ModelMapper modelMapper = new ModelMapper();
-    private ProductDao productDao = ProductDao.getInstance();
+    private ProductRepository productRepository = ProductRepository.getInstance();
 
     public static ProductService getInstance() {
         return INSTANCE;
@@ -22,7 +25,7 @@ public class ProductService {
     private ProductService() {
     }
 
-    public ProductDto convertProductToProductDto(Product product) {
+    private ProductDto convertProductToProductDto(Product product) {
         ProductDto productDto = modelMapper.map(product, ProductDto.class);
         productDto.setId(product.getId());
         productDto.setProductName(product.getProductName());
@@ -31,7 +34,7 @@ public class ProductService {
         return productDto;
     }
 
-    public Product convertProductDtoToProduct(ProductDto productDto) {
+    private Product convertProductDtoToProduct(ProductDto productDto) {
         Product product = modelMapper.map(productDto, Product.class);
         product.setId(productDto.getId());
         product.setProductName(productDto.getProductName());
@@ -39,9 +42,10 @@ public class ProductService {
         product.setPrice(productDto.getPrice());
         return product;
     }
+
     public List<ProductDto> getAllProducts() throws Exception {
 
-        return productDao.findAll().stream().map(product ->
+        return productRepository.findAll().stream().map(product ->
                 new ProductDto(product.getId(),
                         product.getProductName(),
                         product.getDescription(),
@@ -50,13 +54,13 @@ public class ProductService {
     }
 
     public Optional<ProductDto> getProductById(Long productId) {
-        Optional<Product> productOptional = productDao.findById(productId);
+        Optional<Product> productOptional = productRepository.findById(productId);
         return productOptional.map(this::convertProductToProductDto);
     }
 
 
     public List<ProductDto> getProductsByUserId(Long userId) throws Exception {
-        List<Product> products = productDao.getProductsByUserId(userId);
+        List<Product> products = productRepository.getProductsByUserId(userId);
         return products.stream()
                 .map(product -> new ProductDto(product.getId(), product.getProductName()
                         , product.getDescription(), product.getQuantity(), product.getPrice()))
@@ -64,11 +68,19 @@ public class ProductService {
     }
 
     public void reduceQuantityByOne(Long productId, int quantityToDecrease) {
-        productDao.decreaseQuantityByAmount(productId, quantityToDecrease);
+        productRepository.decreaseQuantityByAmount(productId, quantityToDecrease);
     }
 
     public void addProduct(ProductDto productDto) {
+        var validationFactory = Validation.buildDefaultValidatorFactory();
+        var validator = validationFactory.getValidator();
+        var validationResult = validator.validate(productDto);
+
+        if (!validationResult.isEmpty()) {
+            throw new ConstraintViolationException(validationResult);
+        }
+
         Product product = convertProductDtoToProduct(productDto);
-        productDao.save(product);
+        productRepository.save(product);
     }
 }

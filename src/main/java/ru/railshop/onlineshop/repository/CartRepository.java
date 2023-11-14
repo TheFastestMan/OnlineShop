@@ -1,4 +1,4 @@
-package ru.railshop.onlineshop.dao;
+package ru.railshop.onlineshop.repository;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,16 +8,15 @@ import ru.railshop.onlineshop.util.HibernateUtil;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CartDao extends BaseRepository<Long, Cart> {
+public class CartRepository extends BaseRepository<Long, Cart> {
     private static SessionFactory sessionFactory = initializeSessionFactory();
 
-    private static final CartDao INSTANCE = new CartDao(sessionFactory);
+    private static final CartRepository INSTANCE = new CartRepository(sessionFactory);
 
-    public CartDao(SessionFactory sessionFactory) {
+    public CartRepository(SessionFactory sessionFactory) {
         super(sessionFactory, Cart.class);
     }
 
@@ -29,7 +28,7 @@ public class CartDao extends BaseRepository<Long, Cart> {
     }
 
 
-    public static CartDao getInstance() {
+    public static CartRepository getInstance() {
         return INSTANCE;
     }
 
@@ -79,15 +78,6 @@ public class CartDao extends BaseRepository<Long, Cart> {
             }
         }
     }
-
-//    private Cart findOrCreateCartForUser(User user, Session session, Date timestamp) {
-//        Cart cart = new Cart();
-//        cart.setUser(user);
-//        cart.setCreatedAt(timestamp);
-//        session.save(cart);
-//        user.getCarts().add(cart);
-//        return cart;
-//    }
 
     public Cart findOrCreateCartForUser(User user, Session session, Date timestamp) {
 

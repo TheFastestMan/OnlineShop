@@ -47,7 +47,5 @@ public class AddProductsServlet extends HttpServlet {
     }
 
 
-
-
 }
 

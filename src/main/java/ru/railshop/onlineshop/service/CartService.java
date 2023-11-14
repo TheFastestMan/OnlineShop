@@ -1,18 +1,18 @@
 package ru.railshop.onlineshop.service;
 
 import org.modelmapper.ModelMapper;
-import ru.railshop.onlineshop.dao.CartDao;
 import ru.railshop.onlineshop.dto.ProductDto;
 import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.entity.Product;
 import ru.railshop.onlineshop.entity.User;
+import ru.railshop.onlineshop.repository.CartRepository;
 
 
 public class CartService {
     private final static CartService INSTANCE = new CartService();
     private final ModelMapper modelMapper = new ModelMapper();
 
-    private CartDao cartDao = CartDao.getInstance();
+    private CartRepository cartRepository = CartRepository.getInstance();
 
     private CartService() {
     }
@@ -21,7 +21,7 @@ public class CartService {
         return INSTANCE;
     }
 
-    public Product convertProductDtoToProduct(ProductDto productDto) {
+    private Product convertProductDtoToProduct(ProductDto productDto) {
         Product product = modelMapper.map(productDto, Product.class);
         product.setId(productDto.getId());
         product.setProductName(productDto.getProductName());
@@ -29,7 +29,8 @@ public class CartService {
         product.setPrice(productDto.getPrice());
         return product;
     }
-    public User convertUserDtoToUser(UserDto userDto) {
+
+    private User convertUserDtoToUser(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
@@ -40,6 +41,6 @@ public class CartService {
         User user = convertUserDtoToUser(userDto);
         Product product = convertProductDtoToProduct(productDto);
 
-        cartDao.addProductToCart(user, product, quantity);
+        cartRepository.addProductToCart(user, product, quantity);
     }
 }

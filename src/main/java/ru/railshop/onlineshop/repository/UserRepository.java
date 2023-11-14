@@ -1,24 +1,22 @@
-package ru.railshop.onlineshop.dao;
+package ru.railshop.onlineshop.repository;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import ru.railshop.onlineshop.entity.*;
 import ru.railshop.onlineshop.exception.DaoException;
 import ru.railshop.onlineshop.util.HibernateUtil;
 
-import java.util.List;
 import java.util.Optional;
 
-public class UserDao extends BaseRepository<Long, User> {
+public class UserRepository extends BaseRepository<Long, User> {
 
     private static final QUser qUser = QUser.user;
 
     private static final SessionFactory sessionFactory = initializeSessionFactory();
-    private static final UserDao INSTANCE = new UserDao(sessionFactory);
+    private static final UserRepository INSTANCE = new UserRepository(sessionFactory);
 
-    public UserDao(SessionFactory sessionFactory) {
+    public UserRepository(SessionFactory sessionFactory) {
         super(sessionFactory, User.class);
     }
 
@@ -29,7 +27,7 @@ public class UserDao extends BaseRepository<Long, User> {
     }
 
 
-    public static UserDao getInstance() {
+    public static UserRepository getInstance() {
         return INSTANCE;
     }
 
@@ -48,17 +46,4 @@ public class UserDao extends BaseRepository<Long, User> {
         }
     }
 
-    public Optional<User> findByEmail(String email) { // for validation
-        try (Session session = sessionFactory.openSession()) {
-            JPAQuery<User> query = new JPAQuery<>(session);
-            User user = query.select(qUser)
-                    .from(qUser)
-                    .where(qUser.email.eq(email))
-                    .fetchOne();
-
-            return Optional.ofNullable(user);
-        } catch (Exception e) {
-            throw new DaoException("Error retrieving user by email", e);
-        }
-    }
 }

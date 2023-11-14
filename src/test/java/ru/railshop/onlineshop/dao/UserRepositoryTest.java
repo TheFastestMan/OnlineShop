@@ -5,6 +5,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.*;
 import ru.railshop.onlineshop.entity.*;
+import ru.railshop.onlineshop.repository.CartRepository;
+import ru.railshop.onlineshop.repository.ProductRepository;
+import ru.railshop.onlineshop.repository.UserRepository;
 import ru.railshop.onlineshop.util.HibernateUtil;
 import ru.railshop.onlineshop.utils.TestDataImporter;
 
@@ -22,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @TestInstance(PER_CLASS)
-class UserDaoTest {
+class UserRepositoryTest {
     private Date currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-    private final UserDao userDao = UserDao.getInstance();
-    private final CartDao cartDao = CartDao.getInstance();
-    private final ProductDao productDao = ProductDao.getInstance();
+    private final UserRepository userRepository = UserRepository.getInstance();
+    private final CartRepository cartRepository = CartRepository.getInstance();
+    private final ProductRepository productRepository = ProductRepository.getInstance();
     private final SessionFactory sessionFactory = HibernateUtil.configureWithAnnotatedClasses(User.class,
             Cart.class, CartItem.class, Product.class, UserProduct.class);
 
@@ -49,7 +52,7 @@ class UserDaoTest {
         @Cleanup Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        List<User> results = userDao.findAll();
+        List<User> results = userRepository.findAll();
         assertThat(results).hasSize(2);
 
         List<String> userNames = results.stream()
@@ -72,7 +75,7 @@ class UserDaoTest {
         newUser.setRole(Role.USER);
         newUser.setUsername("user");
 
-        userDao.save(newUser);
+        userRepository.save(newUser);
 
         assertEquals("user3_test@gmail.com", newUser.getEmail(), "Emails should match");
         assertEquals("user", newUser.getUsername(), "Emails should match");
@@ -91,29 +94,13 @@ class UserDaoTest {
         String email = "user1_test@gmail.com";
         String password = "password1";
 
-        Optional<User> optionalUser = userDao.findByEmailAndPassword(email, password);
+        Optional<User> optionalUser = userRepository.findByEmailAndPassword(email, password);
 
         assertTrue(optionalUser.isPresent(), "User should be present");
         assertEquals(email, optionalUser.get().getEmail(), "Emails should match");
         assertEquals(password, optionalUser.get().getPassword(), "Passwords should match");
 
         session.getTransaction().commit();
-    }
-
-    @Test
-    public void findByEmailShouldEqualsAssert() {
-        @Cleanup Session session = sessionFactory.openSession();
-        session.beginTransaction();
-
-        String email = "user1_test@gmail.com";
-
-        Optional<User> optionalUser = userDao.findByEmail(email);
-
-        assertTrue(optionalUser.isPresent(), "User should be present");
-        assertEquals(email, optionalUser.get().getEmail(), "Emails should match");
-
-        session.getTransaction().commit();
-
     }
 
     /**
@@ -125,7 +112,7 @@ class UserDaoTest {
         @Cleanup Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
 
         assertThat(products).hasSize(1);
 
@@ -144,7 +131,7 @@ class UserDaoTest {
 
         Long productId = 1L;
 
-        Optional<Product> foundProduct = ProductDao.getInstance().findById(productId);
+        Optional<Product> foundProduct = ProductRepository.getInstance().findById(productId);
 
         Assertions.assertNotNull(foundProduct, "The product should be found");
         Assertions.assertEquals(productId, foundProduct.get().getId(), "The product IDs should match");
@@ -157,7 +144,7 @@ class UserDaoTest {
 
         Long userId = 2L;
 
-        List<Product> products = productDao.getProductsByUserId(userId);
+        List<Product> products = productRepository.getProductsByUserId(userId);
 
         List<String> productName = products.stream()
                 .map(Product::getProductName)

@@ -1,4 +1,4 @@
-package ru.railshop.onlineshop.dao;
+package ru.railshop.onlineshop.repository;
 
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
@@ -10,13 +10,13 @@ import ru.railshop.onlineshop.entity.BaseEntity;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+
 @RequiredArgsConstructor
 public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
-        implements Repository<K,E> {
+        implements Repository<K, E> {
 
     private final SessionFactory sessionFactory;
     private final Class<E> clazz;
-
 
     @Override
     public E save(E entity) {
@@ -39,14 +39,14 @@ public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
     @Override
     public void delete(K id) {
         @Cleanup var session = sessionFactory.openSession();
-        session.delete(session.find(clazz,id));
+        session.delete(session.find(clazz, id));
         session.flush();
     }
 
     @Override
     public Optional<E> findById(K id) {
         @Cleanup var session = sessionFactory.openSession();
-        return Optional.ofNullable(session.find(clazz,id));
+        return Optional.ofNullable(session.find(clazz, id));
     }
 
     @Override

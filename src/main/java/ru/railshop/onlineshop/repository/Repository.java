@@ -1,4 +1,4 @@
-package ru.railshop.onlineshop.dao;
+package ru.railshop.onlineshop.repository;
 
 import ru.railshop.onlineshop.entity.BaseEntity;
 

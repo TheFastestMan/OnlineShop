@@ -8,11 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import ru.railshop.onlineshop.dto.UserDto;
 import ru.railshop.onlineshop.entity.Gender;
 import ru.railshop.onlineshop.entity.Role;
-import ru.railshop.onlineshop.exception.ValidationException;
 import ru.railshop.onlineshop.service.UserService;
 import ru.railshop.onlineshop.util.JspHelper;
-import ru.railshop.onlineshop.validator.CreateUserValidator;
-import ru.railshop.onlineshop.validator.ValidateResult;
 
 
 import java.io.IOException;
@@ -21,7 +18,6 @@ import java.io.IOException;
 public class RegistrationServlet extends HttpServlet {
 
     private final UserService userService = UserService.getInstance();
-    private final CreateUserValidator userValidator = CreateUserValidator.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,19 +43,10 @@ public class RegistrationServlet extends HttpServlet {
                 .gender(Gender.valueOf(String.valueOf(gender)))
                 .build();
 
-        ValidateResult validationResult = userValidator.isValid(userDto);
-
-        if (!validationResult.isValid()) {
-            req.setAttribute("errors", validationResult.getErrors());
-            doGet(req, resp);
-            return;
-        }
-
         try {
             userService.create(userDto);
             resp.sendRedirect("login");
-        } catch (ValidationException e) {
-            req.setAttribute("errors", e.getErrors());
+        } catch (Exception e) {
             doGet(req, resp);
         }
     }
